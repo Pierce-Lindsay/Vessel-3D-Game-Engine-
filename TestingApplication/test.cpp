@@ -1,10 +1,9 @@
 #include "pch.h"
 #include "../Engine/Object.h"
-#include "../Engine/ComponentMap.h"
+#include "../Engine/VectorMap.h"
 #include "../Engine/components/Transformer.h"
 #include "../Engine/components/Hierarchy.h"
-
-
+#include "TestScene.h"
 
 TEST(Hierarchy, removeAddChildren) {
 	ve::Object obj("o1");
@@ -16,8 +15,8 @@ TEST(Hierarchy, removeAddChildren) {
 	std::vector<ve::Object*> childs = { &obj2, &obj3, &obj4 };
 	std::vector<ve::Object*> childs2 = { &obj6 };
 
-	ve::Hierarchy h(childs, &obj5);
-	ve::Hierarchy h2(childs2);
+	ve::Hierarchy h(nullptr, childs, &obj5);
+	ve::Hierarchy h2(nullptr, childs2);
 	ASSERT_TRUE(h.getChildren().size() == 3);
 	EXPECT_EQ(h.getChild(obj2.getID())->getID(), obj2.getID());
 	EXPECT_EQ(h.getChild(obj3.getID())->getID(), obj3.getID());
@@ -35,9 +34,9 @@ TEST(Hierarchy, removeAddChildren) {
 
 TEST(VectorMap, createObjectTypes) {
 
-	ve::ComponentMap map;
-	auto transPtr = std::make_unique<ve::Transformer>(glm::vec3(2.f, 1.f, 6.f));
-	auto hierPtr = std::make_unique<ve::Hierarchy>();
+	ve::VectorMap<std::type_index, ve::Component> map;
+	auto transPtr = std::make_unique<ve::Transformer>(nullptr, glm::vec3(2.f, 1.f, 6.f));
+	auto hierPtr = std::make_unique<ve::Hierarchy>(nullptr);
 	map.add(typeid(ve::Transformer), std::move(transPtr));
 	map.add(typeid(ve::Hierarchy), std::move(hierPtr));
 
@@ -50,9 +49,9 @@ TEST(VectorMap, createObjectTypes) {
 
 TEST(VectorMap, removeObjectTypes) {
 
-	ve::ComponentMap map;
-	auto transPtr = std::make_unique<ve::Transformer>(glm::vec3(2.f, 1.f, 6.f));
-	auto hierPtr = std::make_unique<ve::Hierarchy>();
+	ve::VectorMap<std::type_index, ve::Component> map;
+	auto transPtr = std::make_unique<ve::Transformer>(nullptr, glm::vec3(2.f, 1.f, 6.f));
+	auto hierPtr = std::make_unique<ve::Hierarchy>(nullptr);
 	map.add(typeid(ve::Transformer), std::move(transPtr));
 	map.add(typeid(ve::Hierarchy), std::move(hierPtr));
 
@@ -72,11 +71,11 @@ TEST(VectorMap, removeObjectTypes) {
 
 TEST(VectorMap, oneOfObjectTypes) {
 
-	ve::ComponentMap map;
+	ve::VectorMap<std::type_index, ve::Component> map;
 	glm::vec3 pos1{ 1,1, 1 };
-	auto transPtr = std::make_unique<ve::Transformer>(glm::vec3(2.f, 1.f, 6.f));
-	auto trans2Ptr = std::make_unique<ve::Transformer>(pos1);
-	auto hierPtr = std::make_unique<ve::Hierarchy>();
+	auto transPtr = std::make_unique<ve::Transformer>(nullptr, glm::vec3(2.f, 1.f, 6.f));
+	auto trans2Ptr = std::make_unique<ve::Transformer>(nullptr, pos1);
+	auto hierPtr = std::make_unique<ve::Hierarchy>(nullptr);
 	map.add(typeid(ve::Transformer), std::move(transPtr));
 	map.add(typeid(ve::Hierarchy), std::move(hierPtr));
 	map.add(typeid(ve::Transformer), std::move(trans2Ptr));
@@ -109,8 +108,6 @@ TEST(Object, objectAddComponents) {
 
 	glm::vec3 pos1{ 1,1, 1 };
 	glm::vec3 pos2{ 1,2, 1 };
-	auto transPtr = std::make_unique<ve::Transformer>(glm::vec3(2.f, 1.f, 6.f));
-	auto hierPtr = std::make_unique<ve::Hierarchy>();
 	obj.addComponent<ve::Transformer>(pos1);
 	obj2.addComponent<ve::Transformer>(pos2);
 	std::vector<ve::Object*> children;
@@ -131,4 +128,23 @@ TEST(Object, objectAddComponents) {
 	EXPECT_EQ(childs[1]->getType(), "world3");
 	EXPECT_EQ(obj3.getComponent<ve::Hierarchy>()->getParent()->getType(), "world");
 	EXPECT_EQ(obj4.getComponent<ve::Hierarchy>()->getParent()->getType(), "world");
+}
+
+TEST(Scene, addAndRemove) {
+
+	TestScene ts;
+	ts.startup();
+	auto objs = ts.getObjects();
+	ASSERT_TRUE(objs->size() == 3);
+	EXPECT_EQ(ts.getObject(ts.obj1->getID())->getID(), ts.obj1->getID());
+	EXPECT_EQ(ts.getObject(ts.obj2->getID())->getID(), ts.obj2->getID());
+	EXPECT_EQ(ts.getObject(ts.obj3->getID())->getID(), ts.obj3->getID());
+	auto id = ts.obj2->getID();
+	ts.lazyDeleteObject(ts.obj2); //request delete
+	EXPECT_EQ(ts.obj2->getMarkedForDeletion(), true);
+	ts.update(); //deletes
+	ASSERT_TRUE(objs->size() == 2);
+	EXPECT_EQ(ts.getObject(ts.obj3->getID())->getID(), ts.obj3->getID());
+	EXPECT_EQ(ts.getObject(ts.obj1->getID())->getID(), ts.obj1->getID());
+	EXPECT_EQ(ts.getObject(id), nullptr);
 }

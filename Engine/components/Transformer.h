@@ -39,18 +39,18 @@ namespace ve {
 		/// Create a transformer at 0, 0, 0 with unit scale and 0 rotation. 
 		/// Has a default rotation axis of 0, 0, 1.
 		/// </summary>
-		Transformer();
+		Transformer(Object* owner);
 
 		/// <summary>
 		/// Create a transformer at the given position, scale, rotation, and rotation axis.
 		/// </summary>
-		Transformer(const glm::vec3& pos, const glm::vec3& scale, float rotation, const glm::vec3& rotationAxis);
+		Transformer(Object* owner, const glm::vec3& pos, const glm::vec3& scale, float rotation, const glm::vec3& rotationAxis);
 
 		/// <summary>
 		/// Create a transformer at the given position with unit scale and 0 rotation. 
 		/// Has a default rotation axis of 0, 0, 1.
 		/// </summary>
-		Transformer(const glm::vec3& pos);
+		Transformer(Object* owner, const glm::vec3& pos);
 
 
 		/// <summary>

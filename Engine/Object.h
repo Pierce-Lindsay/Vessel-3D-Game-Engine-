@@ -5,10 +5,11 @@
 #include "components/Component.h"
 #include "managers/LogManager.h"
 #include <memory>
-#include "ComponentMap.h"
+#include "VectorMap.h"
 
 namespace ve {
 
+	class Scene; //forward declaraction so object can have access to scene
 	/// <summary>
 	/// A game object, has a set of components that dictate its data and behavior.
 	/// </summary>
@@ -17,8 +18,11 @@ namespace ve {
 	private:
 		inline static size_t currentID = 0;
 		size_t id = 0;
-		std::string type = "object";
-		ComponentMap components;
+		std::string type = "object"; //maybe a catergory the object falls in
+		std::string name = "undefined"; //name if provided, helps with debugging/indentification
+		bool active = true; //should this object be updated and drawn?
+		bool markedForDeletion = false; //flag for delayed/lazy deletion
+		VectorMap<std::type_index, Component> components;
 
 		/// <summary>
 		/// Adds a component to the collection and returns a raw pointer to it.
@@ -29,8 +33,9 @@ namespace ve {
 		template <typename T>
 		T* addComponentPointer(std::unique_ptr<T> uniquePointer)
 		{
-			T* compPointer = uniquePointer.get(); //get pointer to return before moving
-			components.add(typeid(T), std::move(uniquePointer)); //type id only allows 1 of each component type
+			//type id only allows 1 of each component type
+			T* compPointer = uniquePointer.get();
+			components.add(typeid(T), std::move(uniquePointer)); 
 			return compPointer;
 		}
 
@@ -42,9 +47,47 @@ namespace ve {
 		Object(const std::string& type_name);
 
 		/// <summary>
+		/// Create an object with the given type name and automatically
+		/// add it to the provided scene. If scene is null, returns null.
+		/// </summary>
+		static Object* createSceneObject(const std::string& type_name, Scene* scene);
+
+		/// <summary>
 		/// Sets the type using the provided type name.
 		/// </summary>
 		void setType(const std::string& type_name);
+
+		/// <summary>
+		/// Sets the name using the provided name.
+		/// </summary>
+		void setName(const std::string& name);
+
+		/// <summary>
+		/// Sets the name using the provided name.
+		/// </summary>
+		const std::string& getName() const;
+
+		/// <summary>
+		/// Get whether this object is marked to be 
+		/// deleted(deleted when convenient, but acts like doesn't exist).
+		/// </summary>
+		bool getMarkedForDeletion() const;
+
+		/// <summary>
+		/// Set a bool for whether that the scene will delete this object soon and so
+		/// it shouldn't be updated/drawn.
+		/// </summary>
+		void setMarkedForDeletion(bool b);
+
+		/// <summary>
+		/// Set whether this object should be updated/rendered/ect.
+		/// </summary>
+		void setActive(bool b);
+
+		/// <summary>
+		/// Get whether this object should be updated/rendered/ect.
+		/// </summary>
+		bool getActive() const;
 
 		/// <summary>
 		/// Get objects internal id.
@@ -61,25 +104,11 @@ namespace ve {
 		/// component of each type. The input is <typename>(constructor arguments).
 		/// </summary>
 		/// <returns>Raw pointer to the newly created component.</returns>
-		template <typename T, typename ...arguments>
-		T* addComponent(arguments&& ... args)
+		template <typename T, typename ...Args>
+		T* addComponent(Args&& ... args)
 		{
-			auto component = std::make_unique<T>(std::forward<arguments>(args)...);
-			return addComponentPointer(std::move(component));
-		}
-		
-		/// <summary>
-		/// Add a new component type to the object that is a copy of the component passed in.
-		/// There can only be one of each type.
-		/// The input is <typename>(constructor arguments).
-		/// </summary>
-		/// <returns>Raw pointer to the newly created component.</returns>
-		template <typename T>
-		T* addComponent(T* component)
-		{
-			//copy component
-			std::unique_ptr<T> typedUnique = dynamic_cast<std::unique_ptr<T>>(component->copy());
-			return addComponentPointer(std::move(typedUnique)); //pass ownership
+			auto component = std::make_unique<T>(this, std::forward<Args>(args)...);
+			return addComponentPointer<T>(std::move(component));
 		}
 
 		/// <summary>

@@ -2,21 +2,21 @@
 
 using namespace ve;
 
-Transformer::Transformer()
+Transformer::Transformer(Object* owner) : Component(owner)
 {
 	setType("transformer");
 	updateModelMat();
 }
 
-Transformer::Transformer(const glm::vec3& pos, const glm::vec3& scale, float rotation, const glm::vec3& rotationAxis) :
-	pos{ pos }, dialation{ scale }, rotation{ rotation }, totalRotationAxis{ rotationAxis }, previousUsedRotationAxis{rotationAxis}
+Transformer::Transformer(Object* owner, const glm::vec3& pos, const glm::vec3& scale, float rotation, const glm::vec3& rotationAxis) 
+	: Component(owner), pos{ pos }, dialation{ scale }, rotation{ rotation }, totalRotationAxis{ rotationAxis }, previousUsedRotationAxis{rotationAxis}
 {
 	setRotation(rotation, rotationAxis); //update rotation matrix before
 	setType("transformer");
 	updateModelMat();
 }
 
-Transformer::Transformer(const glm::vec3& pos) : pos{ pos }
+Transformer::Transformer(Object* owner, const glm::vec3& pos) : Component(owner), pos{ pos }
 {
 	setType("transformer");
 	updateModelMat();
@@ -196,7 +196,7 @@ void Transformer::updateCachedRotationValues()
 
 std::unique_ptr<Transformer> Transformer::copy()
 {
-	auto tPointer = std::make_unique<Transformer>(Transformer(pos, dialation, getRotation(), getRotationAxis()));
+	auto tPointer = std::make_unique<Transformer>(Transformer(owner, pos, dialation, getRotation(), getRotationAxis()));
 	return tPointer;
 }
 

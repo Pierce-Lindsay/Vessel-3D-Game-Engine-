@@ -19,13 +19,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ComponentMap.cpp" />
     <ClCompile Include="components\Component.cpp" />
     <ClCompile Include="components\Hierarchy.cpp" />
     <ClCompile Include="managers\LogManager.cpp" />
     <ClCompile Include="managers\Manager.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="components\Transformer.cpp" />
+    <ClCompile Include="scenes\Scene.cpp" />
+    <ClCompile Include="scenes\SceneManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="components\Component.h" />
@@ -34,7 +35,9 @@
     <ClInclude Include="managers\Manager.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="components\Transformer.h" />
-    <ClInclude Include="ComponentMap.h" />
+    <ClInclude Include="scenes\Scene.h" />
+    <ClInclude Include="scenes\SceneManager.h" />
+    <ClInclude Include="VectorMap.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

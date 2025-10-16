@@ -1,6 +1,11 @@
 #include "Component.h"
 
 using namespace ve;
+
+Component::Component(Object* owner) : owner{owner}
+{}
+
+
 Component::~Component()
 {
 	shutdown();

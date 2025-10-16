@@ -1,17 +1,37 @@
 #include "Hierarchy.h"
 
 using namespace ve;
-Hierarchy::Hierarchy(Object* parent)
+Hierarchy::Hierarchy(Object* owner, Object* parent) : Component(owner), parent{parent}
 {
-	this->parent = parent;
 	setType("hierarchy");
 }
 
-Hierarchy::Hierarchy(const std::vector<Object*>& children, Object* parent)
+Hierarchy::Hierarchy(Object* owner, const std::vector<Object*>& children, Object* parent)
+	: Component(owner), parent{ parent }, children{children}
 {
-	this->children = children;
-	this->parent = parent;
 	setType("hierarchy");
+}
+
+void Hierarchy::shutdown()
+{
+	//clean up parent
+	if (parent)
+	{
+		auto hierarchy = parent->getComponent<Hierarchy>();
+		if (hierarchy)
+			hierarchy->removeChild(owner->getID());
+	}
+
+	for (int i = 0; i < children.size(); i++)
+	{
+		auto child = children[i];
+		if (child)
+		{
+			auto hierarchy = child->getComponent<Hierarchy>();
+			if (hierarchy)
+				hierarchy->parent = NULL;
+		}
+	}
 }
 
 
@@ -64,4 +84,18 @@ void Hierarchy::setParent(Object* parent)
 Object* const Hierarchy::getParent() const
 {
 	return parent;
+}
+
+void Hierarchy::addParentChildRelationship(Object* parent, Object* child)
+{
+	auto parentH = parent->getComponent<Hierarchy>();
+	if (!parentH)
+		parent->addComponent<Hierarchy>();
+	parentH->addChild(child);
+
+	auto childH = child->getComponent<Hierarchy>();
+	if (!childH)
+		child->addComponent<Hierarchy>(parent);
+	else
+		childH->setParent(parent);
 }

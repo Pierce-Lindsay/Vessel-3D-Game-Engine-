@@ -2,7 +2,12 @@
 #include <string>
 #include <memory>
 
+
 namespace ve {
+
+	class Object; //forward declaration
+
+
 	/// <summary>
 	/// A component is a class that is meant to be inherited by
 	/// objects that provide a behavior/capabilitis to a gameobject.
@@ -11,7 +16,14 @@ namespace ve {
 	{
 	private:
 		std::string type = "component";
+	protected:
+		Object* owner = NULL; //for convenient child access
 	public:
+
+		/// <summary>
+		/// Create a componnet with the owner set to the passed in object.
+		/// </summary>
+		Component(Object* owner = NULL);
 
 		/// <summary>
 		/// Destructs the component and calls the shutdown function.

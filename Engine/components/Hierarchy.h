@@ -3,12 +3,14 @@
 #include "../Object.h"
 #include <vector>
 
-
 namespace ve {
 
 	/// <summary>
 	/// Represents a hierarchical relationship between objects, 
 	/// allowing for parent-child associations and management of child objects.
+	/// This componnet assumes the relationship isn't one way, for example, if
+	/// the componnet marks an object as a parent, it is expect that parnet has a 
+	/// hierarchy that has this object has a child.
 	/// </summary>
 	class Hierarchy : public Component
 	{
@@ -27,14 +29,20 @@ namespace ve {
 		/// Default with NULL parent and no children. 
 		/// Optionally pass in pointer to parrent.
 		/// </summary>
-		Hierarchy(Object* parent = NULL);
+		Hierarchy(Object* owner, Object* parent = nullptr);
 
 		/// <summary>
 		/// Establishes a parent-child hierarchy among objects.
 		/// </summary>
 		/// <param name="children">A vector containing pointers to child objects to be assigned to the parent.</param>
 		/// <param name="parent">A pointer to the parent object. If NULL, no parent is assigned. Defaults to NULL.</param>
-		Hierarchy(const std::vector<Object*>& children, Object* parent = NULL);
+		Hierarchy(Object* owner, const std::vector<Object*>& children, Object* parent = nullptr);
+
+		/// <summary>
+		/// Cleans up other object's relationships with this component when this is
+		/// destructed. Sets this object to NULL or removes it.
+		/// </summary>
+		void shutdown() override;
 
 		/// <summary>
 		/// Add a child to the vector of children
@@ -71,5 +79,13 @@ namespace ve {
 		/// </summary>
 		/// <returns>A constant pointer to the parent Object, or nullptr if there is no parent.</returns>
 		Object* const getParent() const;
+
+		/// <summary>
+		/// Create a parent child relation ship where the right object is the child of the
+		/// left object and the left object is the parent of the right object. Checks if 
+		/// objects have a hierarchy component and if they don't add one, else mutates 
+		/// already existing hierarchy components.
+		/// </summary>
+		static void addParentChildRelationship(Object* parent, Object* child);
 	};
 }
