@@ -7,7 +7,7 @@
 
 //ensure this is only used in a game engine object/event object class as getType() must be defined
 //this will automatically add class and function to output
-#define LOG(message) LM.writeLog(std::format("{}::{}: {}", getType(), __func__, message))
+#define LOG(message) LM.writeLog(std::format("{}::{}", __FUNCSIG__, message))
 
 namespace ve
 {

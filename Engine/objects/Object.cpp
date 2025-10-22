@@ -10,14 +10,6 @@ Object::Object(const std::string& type_name)
 	currentID++; //increment id
 }
 
-Object* Object::createSceneObject(const std::string& type_name, Scene* scene)
-{
-	if (scene == NULL)
-		return NULL;
-	auto unique = std::make_unique<Object>(type_name);
-	return scene->addObject(std::move(unique));
-}
-
 size_t Object::getID() const
 {
 	return id;

@@ -104,6 +104,23 @@ namespace ve {
 				return 0;
 			}
 		}
+
+		/// <summary>
+		/// Remove the value and key with the specified key from the map and return a unique_ptr to the value. This operation does not
+		/// preserve order and returns null if removal item was not found.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
+		std::unique_ptr<UNIQUE_PTR_VALUE> swapOut(KEY key)
+		{
+			if (!map.contains(key))
+				return nullptr;
+
+			auto returnValue = std::move(values[map[key]]);
+			remove(key); // already checks if key exists, no need to validate again
+			return returnValue;
+		}
+
 		/// <summary>
 		/// Remove all map elements.
 		/// </summary>

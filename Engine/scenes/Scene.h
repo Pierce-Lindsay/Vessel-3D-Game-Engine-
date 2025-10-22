@@ -1,5 +1,5 @@
 #pragma once
-#include "../Object.h"
+#include "../objects/Object.h"
 #include "../VectorMap.h"
 #include <vector>
 
@@ -52,6 +52,16 @@ namespace ve {
 		Object* getObject(size_t id);
 
 		/// <summary>
+		/// Returns true if the given object pointed to is in this scene. False else.
+		/// </summary>
+		bool contains(Object* obj);
+
+		/// <summary>
+		/// Returns true if the given object with the id is in this scene. False else.
+		/// </summary>
+		bool contains(size_t objID);
+
+		/// <summary>
 		/// Uses lazy deletion to remove the specified object with the given id when
 		/// convenient and efficient for the engine. Object will be deactivated until removed.
 		/// Returns 0 on success, -1 on error.
@@ -73,16 +83,23 @@ namespace ve {
 		int instantDeleteObject(Object* obj);
 
 		/// <summary>
-		/// Get the name of the scene. This also is effectivley as the type as it's nice for organization
-		/// for every unqiue subclass to have its own name.
+		/// Only use this function if you are sure it is what you want.
+		/// May cause undefined behavior if done in the middle of updating, and not reccommended using unless necessary.
+		/// Removes specified object from the scene on call and returns the unqiue pounter to it.Returns null on failure.
+		/// </summary>
+		std::unique_ptr<Object> swapOutObject(Object* obj);
+
+		/// <summary>
+		/// Get the name of the scene. Every scene should have a unique name for identification.
 		/// </summary>
 		const std::string& getName() const;
 
 		/// <summary>
-		/// Set the name of the scene. This is effectivley also the type as it's nice for organization
-		/// for every unqiue subclass to have its own name.
+		/// Set the name of the scene. If this name already exists for a different scene, no 
+		/// change in the current name will occur.
 		/// </summary>
-		void setName(const std::string& name);
+		/// <returns>0 if the given name is unique, -1 on failure.</returns>
+		int setName(const std::string& name);
 
 		/// <summary>
 		/// Get the unqiue ID of the scene.

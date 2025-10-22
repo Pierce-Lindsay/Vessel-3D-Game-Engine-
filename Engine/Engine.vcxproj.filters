@@ -21,7 +21,7 @@
     <ClCompile Include="managers\LogManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Object.cpp">
+    <ClCompile Include="objects\Object.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="components\Component.cpp">
@@ -36,7 +36,10 @@
     <ClCompile Include="scenes\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="scenes\SceneManager.cpp">
+    <ClCompile Include="managers\ScenesManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\ObjectFactor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -47,7 +50,7 @@
     <ClInclude Include="managers\LogManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Object.h">
+    <ClInclude Include="objects\Object.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="components\Component.h">
@@ -65,7 +68,10 @@
     <ClInclude Include="VectorMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scenes\SceneManager.h">
+    <ClInclude Include="managers\ScenesManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\ObjectFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

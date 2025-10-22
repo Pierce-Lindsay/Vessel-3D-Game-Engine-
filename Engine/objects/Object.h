@@ -2,10 +2,10 @@
 #include <string>
 #include <unordered_map>
 #include <typeindex>
-#include "components/Component.h"
-#include "managers/LogManager.h"
+#include "../components/Component.h"
+#include "../managers/LogManager.h"
 #include <memory>
-#include "VectorMap.h"
+#include "../VectorMap.h"
 
 namespace ve {
 
@@ -23,34 +23,12 @@ namespace ve {
 		bool active = true; //should this object be updated and drawn?
 		bool markedForDeletion = false; //flag for delayed/lazy deletion
 		VectorMap<std::type_index, Component> components;
-
-		/// <summary>
-		/// Adds a component to the collection and returns a raw pointer to it.
-		/// </summary>
-		/// <typeparam name="T">The type of the component.</typeparam>
-		/// <param name="uniquePointer">A unique pointer to the component to be added.</param>
-		/// <returns>A raw pointer to the added component.</returns>
-		template <typename T>
-		T* addComponentPointer(std::unique_ptr<T> uniquePointer)
-		{
-			//type id only allows 1 of each component type
-			T* compPointer = uniquePointer.get();
-			components.add(typeid(T), std::move(uniquePointer)); 
-			return compPointer;
-		}
-
 	public:
 
 		/// <summary>
 		/// Default constructor for the Object class.
 		/// </summary>
 		Object(const std::string& type_name);
-
-		/// <summary>
-		/// Create an object with the given type name and automatically
-		/// add it to the provided scene. If scene is null, returns null.
-		/// </summary>
-		static Object* createSceneObject(const std::string& type_name, Scene* scene);
 
 		/// <summary>
 		/// Sets the type using the provided type name.
@@ -108,7 +86,10 @@ namespace ve {
 		T* addComponent(Args&& ... args)
 		{
 			auto component = std::make_unique<T>(this, std::forward<Args>(args)...);
-			return addComponentPointer<T>(std::move(component));
+			//type id only allows 1 of each component type
+			T* compPointer = component.get();
+			components.add(typeid(T), std::move(component));
+			return compPointer;
 		}
 
 		/// <summary>

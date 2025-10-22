@@ -1,6 +1,6 @@
 #pragma once
 #include "Component.h"
-#include "../Object.h"
+#include "../objects/Object.h"
 #include <vector>
 
 namespace ve {

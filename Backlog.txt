@@ -1,0 +1,2 @@
+-Ensure adding a non-componnet derived class to object's componnets fails at compile time
+-Ensure adding a non-scene derived class to scene manager's scenes fails at compile time

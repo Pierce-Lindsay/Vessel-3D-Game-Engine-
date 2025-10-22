@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "../Engine/Object.h"
+#include "../Engine/objects/Object.h"
 #include "../Engine/VectorMap.h"
 #include "../Engine/components/Transformer.h"
 #include "../Engine/components/Hierarchy.h"

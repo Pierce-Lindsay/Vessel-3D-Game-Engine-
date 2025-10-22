@@ -1,91 +1,92 @@
 #include "Scene.h"
+#include "../managers/LogManager.h"
 #include <algorithm>
+#include <unordered_set>
 using namespace ve;
+
+//map for enforcing unique scene names
+std::unordered_set<std::string> sceneNameAvailability;
 
 Scene::Scene()
 {
 	id = currentID;
 	currentID++;
+	setName("scene" + std::to_string(id));
 }
 
-/// <summary>
-/// Cleanup scene dependencies.
-/// </summary>
 Scene::~Scene()
 {
 	//resources still loaded?
 }
 
-/// <summary>
-/// Move the given object unique pointer into the scenes internal object storage.
-/// The object will be rendered and updated every frame.
-/// </summary>
 Object* Scene::addObject(std::unique_ptr<Object> object)
 {
 	auto id = object.get()->getID();
 	return objects.add(id, std::move(object));
 }
 
-/// <summary>
-/// Get a const reference to the vector of objects that 
-/// comprise the scene.
-/// </summary>
-/// <returns></returns>
 const std::vector<std::unique_ptr<Object>>* Scene::getObjects() const
 {
 	return objects.getValues();
 }
 
-/// <summary>
-/// Get a pointer to the object with the given id or return null
-/// if not found in the internal vector.
-/// </summary>
 Object* Scene::getObject(size_t id)
 {
 	return objects.get(id);
 }
 
-/// <summary>
-/// Uses lazy deletion to remove the specified object with the given id when
-/// convenient and efficient for the engine. Object will be deactivated until removed.
-/// Returns 0 on success, -1 on error.
-/// </summary>
+bool Scene::contains(Object* obj)
+{
+	if (!obj)
+		return false;
+
+	return objects.contains(obj->getID());
+}
+
+bool Scene::contains(size_t objID)
+{
+	return objects.contains(objID);
+}
+
 int Scene::lazyDeleteObject(size_t id)
 {
 	Object* obj = objects.get(id);
 	return lazyDeleteObject(obj);
 }
 
-/// <summary>
-/// Uses lazy deletion to remove the specified object when
-/// convenient and efficient for the engine. Object will be deactivated until removed.
-/// Returns 0 on success, -1 on error.
-/// </summary>
 int Scene::lazyDeleteObject(Object* obj)
 {
 	if (obj == NULL)
+	{
+		LOG("Faliure, object was null.");
 		return -1;
+	}
 
 	obj->setMarkedForDeletion(true);
 	objectsToDelete.push_back(obj);
 	return 0;
 }
 
-/// <summary>
-/// Only use this function if you are sure it is what you want. This is inefficient,
-/// may cause undefined behavior, and not reccommended using under almost all circumstances.
-/// Removes specified object from the scene on call. Returns 0 on success, -1 on error.
-/// </summary>
 int Scene::instantDeleteObject(Object* obj)
 {
 	if (obj == NULL)
+	{
+		LOG("Faliure, object was null.");
 		return -1;
+	}
 	return objects.remove(obj->getID());
 }
 
-/// <summary>
-/// Get the unqiue ID of the scene.
-/// </summary>
+std::unique_ptr<Object> Scene::swapOutObject(Object* obj)
+{
+	if (obj == NULL)
+	{
+		LOG("Faliure, object was null.");
+		return NULL;
+	}
+	return objects.swapOut(obj->getID());
+}
+
 size_t Scene::getID() const
 {
 	return id;
@@ -96,9 +97,17 @@ const std::string& Scene::getName() const
 	return name;
 }
 
-void Scene::setName(const std::string& name)
+int Scene::setName(const std::string& name)
 {
+	if(sceneNameAvailability.contains(name))
+	{
+		LOG("Scene name " + name + " already taken, not changing name.");
+		return -1;
+	}
+	sceneNameAvailability.erase(this->name);
 	this->name = name;
+	sceneNameAvailability.insert(name);
+	return 0;
 }
 
 void Scene::update()
