@@ -1,5 +1,5 @@
 #include <iostream>
-#include "../Engine/managers/LogManager.h"
+#include "../Instrumentation/logging/LogManager.h"
 
 std::string getType()
 {
@@ -12,5 +12,4 @@ int main(int argc, char* argv[])
     LM.setConsolePrint();
     using namespace ve;
     LOG(std::format("Hello {} world!", 10));
-    LM.shutDown();
 }

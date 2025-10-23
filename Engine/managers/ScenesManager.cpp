@@ -1,5 +1,5 @@
 #include "ScenesManager.h"
-#include "LogManager.h"
+#include "logging/LogManager.h"
 
 using namespace ve;
 

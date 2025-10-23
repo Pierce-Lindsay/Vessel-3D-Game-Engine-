@@ -1,5 +1,4 @@
 #pragma once
-#include "Manager.h"
 #include <fstream>
 #include <format>
 
@@ -12,20 +11,22 @@
 namespace ve
 {
 	/// </summary>
-	class LogManager : public Manager
+	class LogManager
 	{
 	private:
 		LogManager();
-		LogManager(LogManager const &copy);
-		void operator=(LogManager const &assign);
+		LogManager(LogManager const &copy) = delete;
+		void operator=(LogManager const &assign) = delete;
 
 		bool shouldFlush = false;
 		bool consolePrint = false;
+		bool is_started = false;
 		std::ofstream stream;
 		const std::string DEFAULT_FILE_NAME = "vessle_log.txt";
 		const std::string DEFAULT_FILE_PATH = "logs/";
 		std::string file_path = DEFAULT_FILE_PATH;
 		std::string file_name = DEFAULT_FILE_NAME;
+
 
 		/// <summary>
 		/// Gets the full relative file path of the log files.
@@ -59,12 +60,7 @@ namespace ve
 		/// Open/create log file and setup LogManager.
 		/// </summary>
 		/// <returns>0 if succesfful, negative else.</returns>
-		int startUp() override;
-
-		/// <summary>
-		/// Cleanup dependencies.
-		/// </summary>
-		void shutDown() override;
+		int startUp();
 
 		/// <summary>
 		/// Set whether the log file is flushed to every time it is updated (slower if true).

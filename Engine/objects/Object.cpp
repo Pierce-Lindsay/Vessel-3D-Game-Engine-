@@ -1,5 +1,5 @@
 #include "Object.h"
-#include "scenes/Scene.h"
+#include "../scenes/Scene.h"
 
 using namespace ve;
 

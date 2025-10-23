@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Backlog.txt = Backlog.txt
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Instrumentation", "Instrumentation\Instrumentation.vcxproj", "{56FC1FA3-156C-4E51-901F-AA350D1D431E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -49,6 +51,14 @@ Global
 		{52DF8828-C4D7-4DB1-8136-FA1422913880}.Release|x64.Build.0 = Release|x64
 		{52DF8828-C4D7-4DB1-8136-FA1422913880}.Release|x86.ActiveCfg = Release|Win32
 		{52DF8828-C4D7-4DB1-8136-FA1422913880}.Release|x86.Build.0 = Release|Win32
+		{56FC1FA3-156C-4E51-901F-AA350D1D431E}.Debug|x64.ActiveCfg = Debug|x64
+		{56FC1FA3-156C-4E51-901F-AA350D1D431E}.Debug|x64.Build.0 = Debug|x64
+		{56FC1FA3-156C-4E51-901F-AA350D1D431E}.Debug|x86.ActiveCfg = Debug|Win32
+		{56FC1FA3-156C-4E51-901F-AA350D1D431E}.Debug|x86.Build.0 = Debug|Win32
+		{56FC1FA3-156C-4E51-901F-AA350D1D431E}.Release|x64.ActiveCfg = Release|x64
+		{56FC1FA3-156C-4E51-901F-AA350D1D431E}.Release|x64.Build.0 = Release|x64
+		{56FC1FA3-156C-4E51-901F-AA350D1D431E}.Release|x86.ActiveCfg = Release|Win32
+		{56FC1FA3-156C-4E51-901F-AA350D1D431E}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

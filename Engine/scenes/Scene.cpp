@@ -1,5 +1,5 @@
 #include "Scene.h"
-#include "../managers/LogManager.h"
+#include "logging/LogManager.h"
 #include <algorithm>
 #include <unordered_set>
 using namespace ve;

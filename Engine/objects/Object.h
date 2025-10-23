@@ -3,7 +3,7 @@
 #include <unordered_map>
 #include <typeindex>
 #include "../components/Component.h"
-#include "../managers/LogManager.h"
+#include "logging/LogManager.h"
 #include <memory>
 #include "../VectorMap.h"
 

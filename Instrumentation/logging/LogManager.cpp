@@ -7,7 +7,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <cstdarg>
-#include <format>
 
 //for cross-platform
 #ifdef _WIN32
@@ -25,12 +24,13 @@ using namespace ve;
 std::exception FILE_POINTER_NULL = std::exception("Log manager error, The file pointer as null.");
 std::exception FILE_RENAME_ERROR = std::exception("Log manager error, failed to rename file.");
 LogManager::LogManager()
-{
-	setType("LogManager");
-}
+{}
 
 LogManager::~LogManager()
 {
+	//if we havn't been shutdown, do it now
+	LOG("LogManager successfully shutdown!");
+	stream.close();
 }
 
 LogManager& LogManager::GetInstance()
@@ -54,15 +54,8 @@ int LogManager::startUp()
 	//writeLog(std::format("{}::{}: Log Manager successfully started!", getType(), __func__));
 	//writeLog("LogManager::startUp: LogManager successfully started!");
 	LOG("Log Manager successfully started!");
-	return Manager::startUp();
-}
-
-void LogManager::shutDown()
-{
-	//writeLog("LogManager::shutDown: LogManager successfully shutdown!");
-	LOG("LogManager successfully shutdown!");
-	stream.close();
-	Manager::shutDown();
+	is_started = true;
+	return 0;
 }
 
 void LogManager::setFlush(bool shouldFlush)
