@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "TestScene.h"
-#include "../Engine/components/Transformer.h"
-#include "../Engine/components/Hierarchy.h"
-#include "../Engine/objects/ObjectFactory.h"
+#include "Core/components/Transformer.h"
+#include "Core/components/Hierarchy.h"
+#include "Core/objects/ObjectFactory.h"
 
 
 using namespace ve;

@@ -1,7 +1,13 @@
 #include "Object.h"
 #include "../scenes/Scene.h"
+#include "logging/LogManager.h"
 
 using namespace ve;
+
+void Object::log(const std::string& message)
+{
+	LOG(message);
+}
 
 Object::Object(const std::string& type_name)
 {

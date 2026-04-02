@@ -1,5 +1,5 @@
 #pragma once
-#include "../external/glm/gtx/norm.hpp"
+#include <glm/gtx/norm.hpp>
 #include "Component.h"
 
 namespace ve {

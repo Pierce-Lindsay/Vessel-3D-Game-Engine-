@@ -1,8 +1,8 @@
 #include "pch.h"
-#include "../Engine/objects/Object.h"
-#include "../Engine/VectorMap.h"
-#include "../Engine/components/Transformer.h"
-#include "../Engine/components/Hierarchy.h"
+#include "Core/objects/Object.h"
+#include "Core/VectorMap.h"
+#include "Core/components/Transformer.h"
+#include "Core/components/Hierarchy.h"
 #include "TestScene.h"
 
 TEST(Hierarchy, removeAddChildren) {

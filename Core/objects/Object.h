@@ -3,7 +3,7 @@
 #include <unordered_map>
 #include <typeindex>
 #include "../components/Component.h"
-#include "logging/LogManager.h"
+#include <format>
 #include <memory>
 #include "../VectorMap.h"
 
@@ -23,6 +23,12 @@ namespace ve {
 		bool active = true; //should this object be updated and drawn?
 		bool markedForDeletion = false; //flag for delayed/lazy deletion
 		VectorMap<std::type_index, Component> components;
+
+		/// <summary>
+		/// Using LogManager to log messages.
+		/// Allows logging from the header file without exposing the header to object includes.
+		/// </summary>
+		static void log(const std::string& message);
 	public:
 
 		/// <summary>
@@ -118,7 +124,7 @@ namespace ve {
 			int result = components.remove(typeid(T));//automatically deallocate(unique pointer)
 			if (result == -1)
 			{
-				LOG(std::format("Failure to remove component {} from object {} with type {}.", typeid(T).name(), id, type));
+				log(std::format("Failure to remove component {} from object {} with type {}.", typeid(T).name(), id, type));
 				return -1;
 			}
 			return 0;

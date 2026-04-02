@@ -1,5 +1,6 @@
 #pragma once
-#include "../Engine/scenes/Scene.h"
+#include "Core/scenes/Scene.h"
+#include "Core/objects/Object.h"
 
 
 /// <summary>
