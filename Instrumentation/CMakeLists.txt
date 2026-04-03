@@ -10,5 +10,3 @@ add_library(Instrumentation STATIC ${DIR_SOURCES})
 target_compile_features(Instrumentation PUBLIC cxx_std_20)  
 
 target_include_directories(Instrumentation PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-
-target_link_libraries(Instrumentation PRIVATE root_includes)
