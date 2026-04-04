@@ -6,7 +6,7 @@ using namespace ve;
 
 void Object::log(const std::string& message)
 {
-	LOG(message);
+	VE_LOG(message);
 }
 
 Object::Object(const std::string& type_name)

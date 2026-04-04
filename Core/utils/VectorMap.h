@@ -5,7 +5,6 @@
 #include <algorithm>
 #include <functional>
 #include <memory>
-#include "components/Component.h"
 #include <typeindex>
 
 

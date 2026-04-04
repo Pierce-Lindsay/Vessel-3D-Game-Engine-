@@ -1,24 +1,12 @@
 cmake_minimum_required(VERSION 3.25)
 project(Rendering)
 
-# add all source files in Rendering folder
-file(GLOB_RECURSE DIR_SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
+add_library(Rendering INTERFACE)
 
-add_library(Rendering STATIC ${DIR_SOURCES})
+target_compile_features(Rendering INTERFACE cxx_std_20)
 
-target_compile_features(Rendering PUBLIC cxx_std_20)
+target_include_directories(Rendering INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_include_directories(Rendering PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-
-target_link_libraries(Rendering PRIVATE Instrumentation)
-
-target_link_libraries(Rendering PRIVATE
-    Glad
-    GLFW
-    STB
-)
-
-target_link_libraries(Rendering PRIVATE root_includes)
+target_link_libraries(Rendering INTERFACE root_includes)
 
 

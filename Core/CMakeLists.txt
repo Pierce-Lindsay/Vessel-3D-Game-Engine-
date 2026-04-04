@@ -19,3 +19,7 @@ target_link_libraries(Core PUBLIC Instrumentation)
 target_link_libraries(Core PUBLIC glm)
 
 target_link_libraries(Core PRIVATE Rendering)
+
+target_link_libraries(Core PRIVATE Context)
+
+target_link_libraries(Core PRIVATE OpenGLImpl)

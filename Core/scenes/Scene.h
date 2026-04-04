@@ -1,6 +1,5 @@
 #pragma once
 #include "../objects/Object.h"
-#include "../VectorMap.h"
 #include <vector>
 
 namespace ve {

@@ -25,13 +25,13 @@ ScenesManager& ScenesManager::GetInstance()
 
 int ScenesManager::startUp()
 {
-	LOG("Scenes Manager successfully started!");
+	VE_LOG("Scenes Manager successfully started!");
 	return Manager::startUp();
 }
 
 void ScenesManager::shutDown()
 {
-	LOG("ScenesManager successfully shutdown!");
+	VE_LOG("ScenesManager successfully shutdown!");
 	Manager::shutDown();
 }
 
@@ -48,12 +48,12 @@ int ScenesManager::setActiveScene(Scene* scene)
 {
 	if (!scene)
 	{
-		LOG("Failed to set active scene, provided scene was null.");
+		VE_LOG("Failed to set active scene, provided scene was null.");
 		return -1;
 	}
 	else if (!sceneMap.contains(scene->getID()))
 	{
-		LOG("Failed to set active scene, scene was not found in the internal scene map.");
+		VE_LOG("Failed to set active scene, scene was not found in the internal scene map.");
 		return -1;
 	}
 
@@ -66,7 +66,7 @@ int ScenesManager::setActiveScene(size_t sceneID)
 {
 	if (!sceneMap.contains(sceneID))
 	{
-		LOG("Failed to set active scene, scene was not found in the internal scene map.");
+		VE_LOG("Failed to set active scene, scene was not found in the internal scene map.");
 		return -1;
 	}
 	activeScene = sceneMap[sceneID].get();
@@ -95,7 +95,7 @@ int ScenesManager::swapObjectsScene(Object* obj, Scene* sceneA, Scene* sceneB)
 {
 	if (!obj)
 	{
-		LOG("Failed to swap object scene, provided object was null.");
+		VE_LOG("Failed to swap object scene, provided object was null.");
 		return -1;
 	}		
 
@@ -107,7 +107,7 @@ int ScenesManager::swapObjectsScene(size_t objID, Scene* sceneA, Scene* sceneB)
 {
 	if (!sceneA || !sceneB || !sceneA->contains(objID)) //requirements to swap
 	{
-		LOG("Failed to swap object scene, provided object was not in scene 'a' or one of the provided scenes was null.");
+		VE_LOG("Failed to swap object scene, provided object was not in scene 'a' or one of the provided scenes was null.");
 		return -1;
 	}
 	auto obj = sceneA->getObject(objID);
@@ -122,12 +122,12 @@ int ScenesManager::removeScene(size_t sceneID)
 {
 	if (!sceneMap.contains(sceneID))
 	{
-		LOG("Failed to remove scene, provided id was not in the scene map.");
+		VE_LOG("Failed to remove scene, provided id was not in the scene map.");
 		return -1;
 	}
 	else if (activeScene->getID() == sceneID || globalScene->getID() == sceneID)
 	{
-		LOG("Failed to remove scene, provided scene was either teh active or global scene which is not allowed to remove.");
+		VE_LOG("Failed to remove scene, provided scene was either the active or global scene which is not allowed to remove.");
 		return -1;
 	}
 	sceneMap[sceneID].get()->shutdown(); //cleanup first

@@ -5,7 +5,7 @@
 #include "../components/Component.h"
 #include <format>
 #include <memory>
-#include "../VectorMap.h"
+#include "../utils/VectorMap.h"
 
 namespace ve {
 

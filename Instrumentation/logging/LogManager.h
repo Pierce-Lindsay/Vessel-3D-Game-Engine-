@@ -1,15 +1,19 @@
 #pragma once
 #include <fstream>
 #include <format>
+#include <filesystem>
+#include <iostream>
 
 #define LM ve::LogManager::GetInstance()
 
-//ensure this is only used in a game engine object/event object class as getType() must be defined
-//this will automatically add class and function to output
-#define LOG(message) LM.writeLog(std::format("{}::{}", __FUNCSIG__, message))
-
+/// Macros for logging messages to the log file. Uses the LogManager singleton instance to write the log message.
+#define VE_LOG(message) if (!LM.isStarted()) {LM.startUp();} LM.writeLog(std::format("LOG::{}::{}::{}::{}::{}", std::chrono::system_clock::now(), __FUNCSIG__, message, __FILE__, __LINE__)); 
+#define VE_WARN(message) if (!LM.isStarted()) {LM.startUp();} LM.writeLog(std::format("WARNING::{}::{}::{}::{}::{}", std::chrono::system_clock::now(), __FUNCSIG__, message, __FILE__, __LINE__)); 
+#define VE_ERROR(message) if (!LM.isStarted()) {LM.startUp();} LM.writeLog(std::format("ERROR::{}::{}::{}::{}::{}", std::chrono::system_clock::now(), __FUNCSIG__, message, __FILE__, __LINE__)); 
 namespace ve
 {
+	/// <summary>
+	/// Log Manager class for handling logging operations.
 	/// </summary>
 	class LogManager
 	{
@@ -22,10 +26,11 @@ namespace ve
 		bool consolePrint = false;
 		bool is_started = false;
 		std::ofstream stream;
-		const std::string DEFAULT_FILE_NAME = "vessle_log.txt";
-		const std::string DEFAULT_FILE_PATH = "logs/";
+		const std::string DEFAULT_FILE_NAME = "vessel_log.txt";
+		const std::string DEFAULT_FILE_PATH = "logs";
 		std::string file_path = DEFAULT_FILE_PATH;
 		std::string file_name = DEFAULT_FILE_NAME;
+		std::filesystem::path relativeDir = "";
 
 
 		/// <summary>
@@ -36,12 +41,17 @@ namespace ve
 		/// <summary>
 		/// Rename/moves log file based on the current file name/directory and the old.
 		/// </summary>
-		void resetFilePath(const std::string& old_name);
+		void resetFile();
 
 		/// <summary>
 		/// Creates the required directory according to the manager's directory path
 		/// </summary>
 		void createDirectory();
+
+		/// <summary>
+		/// Opens the file stream for the logging file.
+		/// </summary>
+		void openStream();
 
 	public:
 
@@ -63,6 +73,13 @@ namespace ve
 		int startUp();
 
 		/// <summary>
+		/// Get whether the log manager is started. 
+		/// This indicates whether the log file is open and ready to be written to.
+		/// </summary>
+		/// <returns></returns>
+		bool isStarted() const;
+
+		/// <summary>
 		/// Set whether the log file is flushed to every time it is updated (slower if true).
 		/// </summary>
 		void setFlush(bool do_flush = true);
@@ -73,7 +90,7 @@ namespace ve
 		void setConsolePrint(bool print = true);
 
 		/// <summary>
-		/// Set whether the log file prints to the console aswell.
+		/// Get whether the log file prints to the console aswell.
 		/// </summary>
 		bool getConsolePrint() const;
 
@@ -88,6 +105,13 @@ namespace ve
 		/// Sets the outpath path (directory) log file are placed in.
 		/// </summary>
 		void setOutputPath(const std::string& path);
+
+		/// <summary>
+		/// Sets the current relative output path to be based on the location of a marker file
+		/// with the given name upstream.
+		/// </summary>
+		/// <param name="rootFile"></param>
+		void setOutputPathByRoot(const std::string& rootFile);
 
 		/// <summary>
 		/// Sets the file name for the output log file.

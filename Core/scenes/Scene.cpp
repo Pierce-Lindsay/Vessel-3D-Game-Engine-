@@ -58,7 +58,7 @@ int Scene::lazyDeleteObject(Object* obj)
 {
 	if (obj == NULL)
 	{
-		LOG("Faliure, object was null.");
+		VE_LOG("Faliure, object was null.");
 		return -1;
 	}
 
@@ -71,7 +71,7 @@ int Scene::instantDeleteObject(Object* obj)
 {
 	if (obj == NULL)
 	{
-		LOG("Faliure, object was null.");
+		VE_LOG("Faliure, object was null.");
 		return -1;
 	}
 	return objects.remove(obj->getID());
@@ -81,7 +81,7 @@ std::unique_ptr<Object> Scene::swapOutObject(Object* obj)
 {
 	if (obj == NULL)
 	{
-		LOG("Faliure, object was null.");
+		VE_LOG("Faliure, object was null.");
 		return NULL;
 	}
 	return objects.swapOut(obj->getID());
@@ -101,7 +101,7 @@ int Scene::setName(const std::string& name)
 {
 	if(sceneNameAvailability.contains(name))
 	{
-		LOG("Scene name " + name + " already taken, not changing name.");
+		VE_LOG("Scene name " + name + " already taken, not changing name.");
 		return -1;
 	}
 	sceneNameAvailability.erase(this->name);

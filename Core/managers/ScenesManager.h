@@ -2,7 +2,7 @@
 #include "Manager.h"
 #include <unordered_map>
 #include "../scenes/Scene.h"
-#include "../VectorMap.h"
+#include "../utils/VectorMap.h"
 
 namespace ve {
 

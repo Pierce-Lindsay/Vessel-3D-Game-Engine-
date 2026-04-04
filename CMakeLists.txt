@@ -13,8 +13,10 @@ add_subdirectory(external/STB)
 add_subdirectory(external/GLFW)
 
 add_subdirectory(Instrumentation)
+add_subdirectory(Context)
 add_subdirectory(Rendering)
 
+add_subdirectory(renderingAPI/OpenGLImpl)
 
 add_subdirectory(Core)
 add_subdirectory(Sandbox)

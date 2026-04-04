@@ -3,34 +3,25 @@
 #include <stdio.h>
 #include <exception>
 #include <ctime>
-#include <cstdio>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <cstdarg>
-
-//for cross-platform
-#ifdef _WIN32
-#include <direct.h> // For Windows _mkdir
-#define MAKE_DIRECTORY(path) _mkdir(path)
-#else
-#include <sys/stat.h>
-#include <sys/types.h>
-#define MAKE_DIRECTORY(path) mkdir(path, 0777) // 0777 for full permissions
-#endif
-
+#include <filesystem>
 
 using namespace ve;
 
-std::exception FILE_POINTER_NULL = std::exception("Log manager error, The file pointer as null.");
-std::exception FILE_RENAME_ERROR = std::exception("Log manager error, failed to rename file.");
 LogManager::LogManager()
-{}
+{
+	relativeDir = std::filesystem::current_path();
+}
 
 LogManager::~LogManager()
 {
 	//if we havn't been shutdown, do it now
-	LOG("LogManager successfully shutdown!");
-	stream.close();
+
+	VE_LOG("LogManager successfully shutdown!");
+	if (stream.is_open())
+	{
+		stream.flush();
+		stream.close();
+	}
 }
 
 LogManager& LogManager::GetInstance()
@@ -41,21 +32,15 @@ LogManager& LogManager::GetInstance()
 
 int LogManager::startUp()
 {
-	//create directory if doesn't exist
-	createDirectory();
-
-	std::string full_path = (file_path + file_name);
-	stream = std::ofstream(full_path);
-	if(!stream.is_open())
-	{ //failed to open file
-		return -1;
-	}
-	
-	//writeLog(std::format("{}::{}: Log Manager successfully started!", getType(), __func__));
-	//writeLog("LogManager::startUp: LogManager successfully started!");
-	LOG("Log Manager successfully started!");
+	resetFile();
 	is_started = true;
+	VE_LOG("Log Manager successfully started!");
 	return 0;
+}
+
+bool LogManager::isStarted() const
+{
+	return is_started;
 }
 
 void LogManager::setFlush(bool shouldFlush)
@@ -90,19 +75,43 @@ bool LogManager::getConsolePrint() const
 	return consolePrint;
 }
 
+void LogManager::setOutputPathByRoot(const std::string& rootFile)
+{
+	auto currentDir = std::filesystem::current_path();
+	while (!currentDir.empty())
+	{
+		if (std::filesystem::exists(currentDir / rootFile))
+		{
+			relativeDir = currentDir;
+			resetFile(); //reset directory and logging file
+			return;
+		}	
+		currentDir = currentDir.parent_path();
+	}
+	std::cout << "marker file not found!" << '\n';
+}
+
+void LogManager::openStream()
+{
+	std::string full_path = (file_path + "/" + file_name);
+	stream = std::ofstream(relativeDir / full_path);
+	if (!stream.is_open())
+	{ //failed to open file
+		std::cerr << "Failed to open log: " << strerror(errno) << std::endl;
+	}
+}
+
 
 void LogManager::setOutputPath(const std::string& path)
 {
-	std::string old_name = getFullFilePath();
 	file_path = path;
-	resetFilePath(old_name.c_str());
+	resetFile();
 }
 
 void LogManager::setOutputFileName(const std::string& name)
 {
-	std::string old_name = getFullFilePath();
 	file_name = name;
-	resetFilePath(old_name.c_str());
+	resetFile();
 }
 
 const std::string& LogManager::getOutputPath() const
@@ -117,21 +126,26 @@ const std::string& LogManager::getOutputFileName() const
 
 std::string LogManager::getFullFilePath()
 {
-	return (file_path + file_name);
+	return (relativeDir / file_path / file_name).string();
 }
 
-void LogManager::resetFilePath(const std::string& old_name)
+void LogManager::resetFile()
 {
-	if (!stream.is_open()) //rename/move file
+	if (stream.is_open())
 	{
-		createDirectory(); //make sure new dir exists
-		auto new_name = getFullFilePath();
-		if (rename(old_name.c_str(), new_name.c_str()) != 0)
-			throw FILE_RENAME_ERROR;
+		stream.flush();
+		stream.close();
 	}
+	createDirectory(); //make sure new dir exists
+	openStream();
 }
 
 void LogManager::createDirectory()
 {
-	MAKE_DIRECTORY(file_path.c_str());
+	try {
+		std::filesystem::create_directories(relativeDir / file_path);
+	}
+	catch (const std::filesystem::filesystem_error& e) {
+		std::cerr << e.what();
+	}
 }
