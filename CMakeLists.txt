@@ -1,4 +1,6 @@
 cmake_minimum_required(VERSION 3.25)
+# Set the runtime library to MultiThreadedDLL for both Debug and Release configurations
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL" CACHE STRING "" FORCE)
 project(Vessel)
 
 # Target for root includes (for convenience, not strictly necessary)
