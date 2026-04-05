@@ -1,8 +1,13 @@
+#include "renderingAPI/OpenGLImpl/Renderer.h"
+#include "rendering/IRenderer.h"
 #include <iostream>
 #include "Instrumentation/logging/LogManager.h"
 #include "Instrumentation/timing/LifetimeTimer.h"
 #include "Instrumentation/timing/FunctionTimer.h"
 #include "Context/window.h"
+#include "Rendering/Mesh.h"
+
+
 
 void foo()
 {
@@ -44,12 +49,32 @@ void test()
 
 int main(int argc, char* argv[])
 {
-    test();
+    //test();
     ve::Window w;
 	w.init();
 
+    ve::IRenderer* renderer = new ve::RendererOpenGL();
+	renderer->Init();
+	renderer->SetClearColor(glm::vec4(0.2, 0.3, 0.3, 1.0));
+	renderer->SetViewport(0, 0, 1920, 1080);
+	auto material = new ve::Material("basicShader.shader", glm::vec4(1.0, 0, 0, 1.0));
+	auto mesh = new ve::Mesh(
+        { -1, -1, 0, 1, 1, -1, 0, 1, 0, 1, 0, 1 }, 
+        {0, 0, 0, 0, 0, 0}, 
+        { 0, 0, 0, 0, 0, 0, 0, 0 ,0 }, 
+        { 0, 1, 2 }, material);
+
+	renderer->Register(mesh);
+
     while(w.isOpen())
     {
+        renderer->Clear();
+		renderer->Draw(mesh, glm::mat4(1.0f), glm::mat4(1.0f), glm::mat4(1.0f));
         w.update();
-	}   
+        
+	}
+	delete mesh;
+	delete material;
+	delete renderer;
+	return 0;
 }

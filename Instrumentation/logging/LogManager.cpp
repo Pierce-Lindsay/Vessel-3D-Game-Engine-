@@ -4,6 +4,7 @@
 #include <exception>
 #include <ctime>
 #include <filesystem>
+#include "../files/FileUtils.h"
 
 using namespace ve;
 
@@ -77,18 +78,12 @@ bool LogManager::getConsolePrint() const
 
 void LogManager::setOutputPathByRoot(const std::string& rootFile)
 {
-	auto currentDir = std::filesystem::current_path();
-	while (!currentDir.empty())
-	{
-		if (std::filesystem::exists(currentDir / rootFile))
-		{
-			relativeDir = currentDir;
-			resetFile(); //reset directory and logging file
-			return;
-		}	
-		currentDir = currentDir.parent_path();
-	}
-	std::cout << "marker file not found!" << '\n';
+	auto pathToRoot = FileUtils::GetPathToMarker(rootFile);
+
+	if(std::filesystem::exists(pathToRoot/ rootFile))
+		relativeDir = pathToRoot;
+	else
+		std::cout << "marker file not found!" << '\n';
 }
 
 void LogManager::openStream()

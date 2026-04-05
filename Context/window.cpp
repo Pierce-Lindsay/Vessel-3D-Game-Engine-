@@ -10,9 +10,10 @@ namespace ve {
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE); // before glfwCreateWindow
 		//glfwWindowHint(GLFW_VSYNC, GLFW_FALSE);
 
-		window = glfwCreateWindow(width, height, "3dRender", NULL, NULL);
+		window = glfwCreateWindow(width, height, "Vessel", NULL, NULL);
 		if (window == NULL)
 		{
 			std::cout << "Failed to create GLFW window" << '\n';

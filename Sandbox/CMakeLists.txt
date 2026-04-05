@@ -12,4 +12,8 @@ target_include_directories(Sandbox PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(Sandbox PRIVATE root_includes)
 
+target_link_libraries(Sandbox PRIVATE Rendering)
+
 target_link_libraries(Sandbox PRIVATE Core)
+
+
