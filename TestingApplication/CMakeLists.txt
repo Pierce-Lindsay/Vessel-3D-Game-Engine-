@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.25)
 project(TestingApplication)
 
 # add all source files in TestingApplication folder
-file(GLOB_RECURSE DIR_SOURCES
+file(GLOB_RECURSE DIR_SOURCES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
 
 add_executable(TestingApplication ${DIR_SOURCES})

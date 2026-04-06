@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.25)
 project(STB)
 
 # add all source files in STB folder
-file(GLOB_RECURSE DIR_SOURCES
+file(GLOB_RECURSE DIR_SOURCES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
 
 add_library(STB STATIC ${DIR_SOURCES})

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.25)
 project(Glad)
 
 # add all source files in Glad folder
-file(GLOB_RECURSE DIR_SOURCES
+file(GLOB_RECURSE DIR_SOURCES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.c")
 
 add_library(Glad STATIC ${DIR_SOURCES})

@@ -80,8 +80,11 @@ void LogManager::setOutputPathByRoot(const std::string& rootFile)
 {
 	auto pathToRoot = FileUtils::GetPathToMarker(rootFile);
 
-	if(std::filesystem::exists(pathToRoot/ rootFile))
+	if (std::filesystem::exists(pathToRoot / rootFile))
+	{
 		relativeDir = pathToRoot;
+		resetFile();
+	}
 	else
 		std::cout << "marker file not found!" << '\n';
 }

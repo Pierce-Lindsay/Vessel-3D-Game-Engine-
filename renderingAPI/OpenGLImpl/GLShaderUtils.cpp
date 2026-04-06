@@ -18,8 +18,9 @@ namespace ve
 		std::string shader_source;
 		std::ifstream file;
 		file.open(filepath);
+		
 		if (file.is_open())
-			std::cout << filepath << " file opened" << '\n';
+			VE_LOG(std::format("Successfully Opened shader file: {}", filepath));
 		//create modes for pushing data
 		//a mode will be true until proven otherwise
 		enum class shader_push_mode {
@@ -130,8 +131,12 @@ namespace ve
 		}
 	}
 
-	GLuint GLShaderUtils::CompileShader(const std::string& fullPath)
+	std::expected<GLuint, std::string> GLShaderUtils::CompileShader(const std::string& fullPath)
 	{
+		//check if file exists
+		if (!std::filesystem::exists(fullPath))
+			return std::unexpected(std::format("Shader file {} does not exist!", fullPath));
+
 		VE_LOG(std::format("Compiling shader: {}", fullPath));
 		auto sources = GetSources(fullPath);
 		const GLchar* vertex_shader_source[]{ sources.vertex_source.c_str() };

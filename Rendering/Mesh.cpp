@@ -7,6 +7,11 @@ namespace ve
 		: vertices(vertices), texCoords(texcoords), normals(normals), indices(indices), material(material)
 	{
 	}
+
+	//Mesh::Mesh(const std::vector<float>& interleavedVertices, std::vector<unsigned int>& indices, Material* material)
+	//{
+	//
+	//}
 	Mesh::Mesh()
 	{
 	}
@@ -19,7 +24,5 @@ namespace ve
 	const std::vector<float>& Mesh::GetTexCoords() const { return texCoords; }
 
 	const std::vector<unsigned int>& Mesh::GetIndices() const { return indices; }
-	const size_t Mesh::GetRenderingHandle() const { return renderingHandle; }
-	void Mesh::SetRenderingHandle(size_t handle) { renderingHandle = handle; }
 	Material* Mesh::GetMaterial() const { return material; }
 }

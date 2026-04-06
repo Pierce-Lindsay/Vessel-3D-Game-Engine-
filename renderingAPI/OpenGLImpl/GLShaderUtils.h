@@ -1,9 +1,13 @@
 #pragma once
 #include <external/Glad/glad/glad.h>
 #include <string>
+#include <expected>
 
 namespace ve
 {
+	/// <summary>
+	/// A static utility class for compiling shader programs in OpenGL.
+	/// </summary>
 	class GLShaderUtils
 	{
 	private:
@@ -20,6 +24,6 @@ namespace ve
 		/// where [stage] is one of "vertex", "tcs", "tes", "geometry", or "fragment".
 		/// Returns the handle to the compiled shader program.
 		/// </summary>
-		static GLuint CompileShader(const std::string& fullPath);
+		static std::expected<GLuint, std::string> CompileShader(const std::string& fullPath);
 	};
 }

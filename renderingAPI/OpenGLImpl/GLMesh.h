@@ -4,6 +4,11 @@
 
 namespace ve
 {
+	/// <summary>
+	/// An OpenGL implementation of a mesh for rendering. 
+	/// This class is responsible for building the OpenGL components 
+	/// for a given Mesh and providing methods for binding and unbinding the mesh for rendering.
+	/// </summary>
 	class GLMesh
 	{
 	public:

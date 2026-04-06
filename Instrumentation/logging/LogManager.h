@@ -7,9 +7,9 @@
 #define LM ve::LogManager::GetInstance()
 
 /// Macros for logging messages to the log file. Uses the LogManager singleton instance to write the log message.
-#define VE_LOG(message) if (!LM.isStarted()) {LM.startUp();} LM.writeLog(std::format("LOG::{}::{}::{}::{}::{}", std::chrono::system_clock::now(), __FUNCSIG__, message, __FILE__, __LINE__)); 
-#define VE_WARN(message) if (!LM.isStarted()) {LM.startUp();} LM.writeLog(std::format("WARNING::{}::{}::{}::{}::{}", std::chrono::system_clock::now(), __FUNCSIG__, message, __FILE__, __LINE__)); 
-#define VE_ERROR(message) if (!LM.isStarted()) {LM.startUp();} LM.writeLog(std::format("ERROR::{}::{}::{}::{}::{}", std::chrono::system_clock::now(), __FUNCSIG__, message, __FILE__, __LINE__)); 
+#define VE_LOG(message) if (!LM.isStarted()) {LM.startUp();} LM.writeLog(std::format("LOG::{} in {}\n{}\n{}::{}\n", std::chrono::system_clock::now(), __FUNCSIG__, message, __FILE__, __LINE__)); 
+#define VE_WARN(message) if (!LM.isStarted()) {LM.startUp();} LM.writeLog(std::format("WARNING::{} in {}\n{}\n{}::{}\n", std::chrono::system_clock::now(), __FUNCSIG__, message, __FILE__, __LINE__)); 
+#define VE_ERROR(message) if (!LM.isStarted()) {LM.startUp();} LM.writeLog(std::format("ERROR::{} in {}\n{}\n{}::{}\n", std::chrono::system_clock::now(), __FUNCSIG__, message, __FILE__, __LINE__)); 
 namespace ve
 {
 	/// <summary>

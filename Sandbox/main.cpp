@@ -1,11 +1,12 @@
-#include "renderingAPI/OpenGLImpl/Renderer.h"
-#include "rendering/IRenderer.h"
+#include "renderingAPI/OpenGLImpl/GLRenderer.h"
 #include <iostream>
 #include "Instrumentation/logging/LogManager.h"
 #include "Instrumentation/timing/LifetimeTimer.h"
 #include "Instrumentation/timing/FunctionTimer.h"
+#include "Instrumentation/files/FileUtils.h"
 #include "Context/window.h"
 #include "Rendering/Mesh.h"
+#include "Rendering/Camera.h"
 
 
 
@@ -49,14 +50,20 @@ void test()
 
 int main(int argc, char* argv[])
 {
-    //test();
+    test();
     ve::Window w;
 	w.init();
 
-    ve::IRenderer* renderer = new ve::RendererOpenGL();
+    ve::Renderer* renderer = new ve::GLRenderer();
 	renderer->Init();
+	renderer->SetShaderDirectory(ve::FileUtils::GetPathToMarker("engine.root") / "assets" / "shaders");
 	renderer->SetClearColor(glm::vec4(0.2, 0.3, 0.3, 1.0));
 	renderer->SetViewport(0, 0, 1920, 1080);
+
+    //auto cam = new ve::Camera();
+	auto cam = new ve::Camera(glm::vec3(0, 0, 3), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0), 45.0f, w.getAspectRatio(), 0.1f, 100.0f);
+
+
 	auto material = new ve::Material("basicShader.shader", glm::vec4(1.0, 0, 0, 1.0));
 	auto mesh = new ve::Mesh(
         { -1, -1, 0, 1, 1, -1, 0, 1, 0, 1, 0, 1 }, 
@@ -69,7 +76,7 @@ int main(int argc, char* argv[])
     while(w.isOpen())
     {
         renderer->Clear();
-		renderer->Draw(mesh, glm::mat4(1.0f), glm::mat4(1.0f), glm::mat4(1.0f));
+		renderer->Draw(mesh, glm::mat4(1.0f), cam);
         w.update();
         
 	}

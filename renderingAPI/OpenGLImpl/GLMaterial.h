@@ -53,6 +53,10 @@ namespace ve
 		/// </summary>
 		void SetUniforms() const;
 
+		/// <summary>
+		/// Set the OpenGL shader program handle for this material.
+		/// </summary>
+		/// <param name="shaderProgram"></param>
 		void SetShaderProgram(GLuint shaderProgram);
 
 	};

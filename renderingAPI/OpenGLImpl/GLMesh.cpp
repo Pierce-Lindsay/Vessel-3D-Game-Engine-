@@ -60,13 +60,13 @@ namespace ve
 	}
 
 
-	void GLMesh::buildVBO(const std::vector<float>& vertices)
+	void GLMesh::buildVBO(const std::vector<float>& interleavedVertices)
 	{
 		//VBO
 		glGenBuffers(1, &info.VBO);
 		glBindBuffer(GL_ARRAY_BUFFER, info.VBO);
 
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * interleavedVertices.size(), interleavedVertices.data(), GL_STATIC_DRAW);
 	}
 	void GLMesh::buildAttributes()
 	{
