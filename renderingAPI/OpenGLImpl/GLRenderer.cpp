@@ -19,34 +19,47 @@ namespace ve
 
 	void GLRenderer::Register(Mesh* mesh)
 	{
-		//register geometry
-		GLMesh glMesh(mesh);
-		meshMap[meshCounter] = std::move(glMesh);
-		mesh->SetRenderingHandle(meshCounter);
-		meshCounter++;
-
-		//register material
-		auto material = mesh->GetMaterial();
-		GLMaterial glMaterial(material);
-		// If the shader program is not already registered, this will compile and register it. Otherwise, it will return the existing handle.
-		auto shaderProgramHandle = RegisterShader(material->GetShaderName());
-		if (!shaderProgramHandle.has_value())
+		auto er = RegisterMesh(mesh);
+		if (!er)
 		{
-			VE_ERROR(std::format("Failed to compile shader program {}. Error: {}", material->GetShaderName(), shaderProgramHandle.error()));
-			return;
+			VE_ERROR(er.error());
 		}
-		glMaterial.SetShaderProgram(shaderProgramHandle.value());
-		materialMap[materialCounter] = std::move(glMaterial);
-		material->SetRenderingHandle(materialCounter);
-		materialCounter++;
+			
+		er = RegisterMaterial(mesh->GetMaterial());
+		if (!er)
+		{
+			VE_ERROR(er.error());
+		}
+			
+			
 	}
 
-	void GLRenderer::Draw(const Mesh* mesh, const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection)
+	void GLRenderer::Draw(Mesh* mesh, const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection)
 	{
 
 		auto material = mesh->GetMaterial();
 		// Here we would set up any shader uniforms or other state needed for rendering the mesh
 		auto handle = material->GetRenderingHandle();
+		if (!handle.has_value())
+		{
+			VE_ERROR(std::format("Material has not been registered with the renderer. Cannot draw mesh."));
+			return;
+		}
+
+		if (material->RequiresReRegister())
+		{
+			if (materialMap.contains(handle.value()))
+				materialMap.erase(handle.value());
+			
+			std::expected<void, std::string> er = RegisterMaterial(material);
+			if (!er)
+			{
+				VE_ERROR(std::format("Faliure to ReRegister Material error: {}", er.error()));
+			}
+			handle = material->GetRenderingHandle();
+
+		}
+		//clean up repeat code here later
 		if (!handle.has_value())
 		{
 			VE_ERROR(std::format("Material has not been registered with the renderer. Cannot draw mesh."));
@@ -63,6 +76,27 @@ namespace ve
 			VE_ERROR(std::format("Mesh has not been registered with the renderer. Cannot draw mesh."));
 			return;
 		}
+		
+
+		if (mesh->RequiresReRegister())
+		{
+			if (meshMap.contains(handle.value()))
+				meshMap.erase(handle.value());
+
+			std::expected<void, std::string> er = RegisterMesh(mesh);
+			if (!er)
+			{
+				VE_ERROR(std::format("Faliure to ReRegister mesh error: {}", er.error()));
+			}			
+			handle = mesh->GetRenderingHandle();
+		}
+
+		if (!handle.has_value())
+		{
+			VE_ERROR(std::format("Mesh has not been registered with the renderer. Cannot draw mesh."));
+			return;
+		}
+
 		const auto& glMesh = meshMap.at(handle.value());
 		glMesh.Bind();
 
@@ -96,6 +130,7 @@ namespace ve
 			}, nullptr);
 
 		glDisable(GL_CULL_FACE); // temporarily disable to check
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		return true;
 	}
@@ -151,5 +186,30 @@ namespace ve
 
 		shaderProgramMap[name] = programHandle.value();
 		return programHandle;
+	}
+
+	std::expected<void,std::string> GLRenderer::RegisterMaterial(Material* material)
+	{
+		//register material
+		GLMaterial glMaterial(material);
+		// If the shader program is not already registered, this will compile and register it. Otherwise, it will return the existing handle.
+		auto shaderProgramHandle = RegisterShader(material->GetShaderName());
+		if (!shaderProgramHandle.has_value())
+			return std::unexpected(std::format("Failed to compile shader program {}. Error: {}", material->GetShaderName(), shaderProgramHandle.error()));
+		glMaterial.SetShaderProgram(shaderProgramHandle.value());
+		materialMap[materialCounter] = std::move(glMaterial);
+		material->SetRenderingHandle(materialCounter);
+		materialCounter++;
+		return {};
+	}
+	std::expected<void, std::string> GLRenderer::RegisterMesh(Mesh* mesh)
+	{
+		//register geometry
+		GLMesh glMesh(mesh);
+		meshMap[meshCounter] = std::move(glMesh);
+		mesh->SetRenderingHandle(meshCounter);
+		meshCounter++;
+		//ik this is horrible FIX LATER
+		return {};
 	}
 }

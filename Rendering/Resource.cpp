@@ -20,9 +20,20 @@ namespace ve
 	{
 		this->renderingHandle = handle;
 		registeredWithRenderer = true;
+		requiresReRegister = false;
 	}
 	const bool Resource::IsRegisteredWithRenderer() const
 	{
 		return registeredWithRenderer;
+	}
+
+	const bool Resource::RequiresReRegister() const
+	{
+		return requiresReRegister;
+	}
+
+	void Resource::SetRequiresReRegister()
+	{
+		requiresReRegister = true;
 	}
 }

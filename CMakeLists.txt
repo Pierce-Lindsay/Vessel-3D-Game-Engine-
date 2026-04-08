@@ -17,6 +17,7 @@ add_subdirectory(external/GLFW)
 add_subdirectory(Instrumentation)
 add_subdirectory(Context)
 add_subdirectory(Rendering)
+add_subdirectory(Loaders)
 
 add_subdirectory(renderingAPI/OpenGLImpl)
 

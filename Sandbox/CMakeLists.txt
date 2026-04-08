@@ -14,6 +14,8 @@ target_link_libraries(Sandbox PRIVATE root_includes)
 
 target_link_libraries(Sandbox PRIVATE Rendering)
 
+target_link_libraries(Sandbox PRIVATE Loaders)
+
 target_link_libraries(Sandbox PRIVATE Core)
 
 

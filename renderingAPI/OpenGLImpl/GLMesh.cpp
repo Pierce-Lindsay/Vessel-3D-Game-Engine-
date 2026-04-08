@@ -8,25 +8,7 @@ namespace ve
 		glBindVertexArray(info.VAO);
 		info.indexCount = static_cast<GLsizei>(mesh->GetIndices().size());
 
-		std::vector<float> interleavedVertices; // This should be interleaved vertex data (position, texcoord, normal)
-		interleavedVertices.reserve(mesh->GetVertices().size() + mesh->GetTexCoords().size() + mesh->GetNormals().size());
-		for(auto i = 0; i < mesh->GetVertices().size() / 4; i++) // Assuming 4 components for position
-		{
-			// Position
-			interleavedVertices.push_back(mesh->GetVertices()[i * 4]);
-			interleavedVertices.push_back(mesh->GetVertices()[i * 4 + 1]);
-			interleavedVertices.push_back(mesh->GetVertices()[i * 4 + 2]);
-			interleavedVertices.push_back(mesh->GetVertices()[i * 4 + 3]);
-			// TexCoord
-			interleavedVertices.push_back(mesh->GetTexCoords()[i * 2]);
-			interleavedVertices.push_back(mesh->GetTexCoords()[i * 2 + 1]);
-			// Normal
-			interleavedVertices.push_back(mesh->GetNormals()[i * 3]);
-			interleavedVertices.push_back(mesh->GetNormals()[i * 3 + 1]);
-			interleavedVertices.push_back(mesh->GetNormals()[i * 3 + 2]);
-		}
-
-		buildVBO(interleavedVertices);
+		buildVBO(mesh->GetVertices());
 		buildEBO(mesh->GetIndices());
 		buildAttributes();
 

@@ -24,13 +24,13 @@ namespace ve
 		/// view, and projection matrices. The mesh must have been 
 		/// registered with the renderer before calling this method.
 		/// </summary>
-		virtual void Draw(const Mesh* mesh, const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection) = 0;
+		virtual void Draw(Mesh* mesh, const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection) = 0;
 
 		/// <summary>
 		/// Draw a mesh using the provided model matrix and camera. 
 		/// The mesh must have been registered with the renderer before calling this method.
 		/// </summary>
-		void Draw(const Mesh* mesh, const glm::mat4& model, const Camera* camera);
+		void Draw(Mesh* mesh, const glm::mat4& model, const Camera* camera);
 
 		/// <summary>
 		/// Initialize the renderer. 

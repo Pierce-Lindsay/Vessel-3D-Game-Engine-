@@ -7,6 +7,8 @@
 #include "Context/window.h"
 #include "Rendering/Mesh.h"
 #include "Rendering/Camera.h"
+#include "Loaders/OBJLoader.h"
+#include <glm/gtx/norm.hpp>
 
 
 
@@ -48,11 +50,14 @@ void test()
 	VE_TIME_MEASURE(100, foo2, 10, 3.14);
 }
 
+
 int main(int argc, char* argv[])
 {
     test();
     ve::Window w;
 	w.init();
+
+	//testOBJLoader();
 
     ve::Renderer* renderer = new ve::GLRenderer();
 	renderer->Init();
@@ -66,18 +71,30 @@ int main(int argc, char* argv[])
 
 	auto material = new ve::Material("basicShader.shader", glm::vec4(1.0, 0, 0, 1.0));
 	auto mesh = new ve::Mesh(
-        { -1, -1, 0, 1, 1, -1, 0, 1, 0, 1, 0, 1 }, 
-        {0, 0, 0, 0, 0, 0}, 
-        { 0, 0, 0, 0, 0, 0, 0, 0 ,0 }, 
-        { 0, 1, 2 }, material);
+        { },
+        { }, material);
+
+    auto path = ve::FileUtils::GetPathToMarker("engine.root") / "assets" / "models";
+   auto er = ve::OBJLoader::LoadOBJ((path / "cessna.obj").string(), mesh);  
+
+   if (!er)
+       VE_WARN(er.error());
 
 	renderer->Register(mesh);
 
+    float f = 0;
+  
+
     while(w.isOpen())
     {
+        auto mat = glm::scale(glm::mat4(1.0f), glm::vec3(0.1, 0.1, 0.1));
+        mat = glm::rotate(mat, glm::radians(f), glm::vec3(0, 1, 0));
+        mat = glm::translate(mat, glm::vec3(0, 0, -30));
+        
         renderer->Clear();
-		renderer->Draw(mesh, glm::mat4(1.0f), cam);
+		renderer->Draw(mesh, mat, cam);
         w.update();
+        f += 0.01;
         
 	}
 	delete mesh;

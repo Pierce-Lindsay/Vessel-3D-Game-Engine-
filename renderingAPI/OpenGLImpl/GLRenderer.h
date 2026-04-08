@@ -20,7 +20,7 @@ namespace ve
 		/// <param name="mesh"></param>
 		void Register(Mesh* mesh) override;
 
-		void Draw(const Mesh* mesh, const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection) override;
+		void Draw(Mesh* mesh, const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection) override;
 		bool Init() override;
 		bool ShutDown() override;
 
@@ -47,5 +47,9 @@ namespace ve
 		/// If the shader program is already registered, it simply returns the existing handle.
 		/// </summary>
 		std::expected<GLuint, std::string> RegisterShader(const std::string& name);
+
+		std::expected<void, std::string> RegisterMaterial(Material* material);
+		std::expected<void, std::string> RegisterMesh(Mesh* mesh);
+
 	};
 }

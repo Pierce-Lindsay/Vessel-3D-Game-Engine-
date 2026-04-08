@@ -11,7 +11,7 @@ namespace ve
 		return shaderDirectory;
 	}
 
-	void Renderer::Draw(const Mesh* mesh, const glm::mat4& model, const Camera* camera)
+	void Renderer::Draw(Mesh* mesh, const glm::mat4& model, const Camera* camera)
 	{
 		Draw(mesh, model, camera->GetViewMatrix(), camera->GetProjectionMatrix());
 	}

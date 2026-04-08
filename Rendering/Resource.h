@@ -13,6 +13,7 @@ namespace ve
 	protected:
 		size_t renderingHandle = 0;
 		bool registeredWithRenderer = false;
+		bool requiresReRegister = false;
 	public:
 		/// <summary>
 		/// Generate a new resource. The rendering handle is invalid until the resource is registered with the renderer, 
@@ -37,5 +38,16 @@ namespace ve
 		/// Get whether the resource has been registered with the renderer.
 		/// </summary>
 		const bool IsRegisteredWithRenderer() const;
+
+		/// <summary>
+		/// Get whether the resource should be reregistered before the next draw call.
+		/// </summary>
+		const bool RequiresReRegister() const;
+
+		/// <summary>
+		/// Set that the resource should be reregistered before the next draw call.
+		/// </summary>
+		/// <param name="b"></param>
+		void SetRequiresReRegister();
 	};
 }
