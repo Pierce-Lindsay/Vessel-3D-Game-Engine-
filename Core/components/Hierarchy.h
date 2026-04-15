@@ -2,6 +2,7 @@
 #include "Component.h"
 #include "../objects/Object.h"
 #include <vector>
+#include "Transformer.h"
 
 namespace ve {
 
@@ -22,6 +23,8 @@ namespace ve {
 		/// Get the vector iterator from looking for the child with the given id.
 		/// </summary>
 		std::vector<Object*>::iterator getChildIterator(size_t id);
+
+		bool hierarchicalTransformations = true;
 
 	public:
 
@@ -87,5 +90,24 @@ namespace ve {
 		/// already existing hierarchy components.
 		/// </summary>
 		static void addParentChildRelationship(Object* parent, Object* child);
+
+		/// <summary>
+		/// Gets whether this component's object's model matrix should be influenced by the transforms
+		/// of its parent/ancestors.
+		/// </summary>
+		bool GetExperiencesHierarchicalTransformations() const;
+
+		/// <summary>
+		/// Set whether this component's object's model matrix should be influenced by the transforms
+		/// of its parent/ancestors.
+		/// </summary>
+		void SetExperiencesHierarchicalTransformations(bool b);
+
+		/// <summary>
+		/// Compute this component's object's model matrix by the transforms
+		/// of its parent/ancestors. If this object doesn't have a transformer
+		/// return identity matrix.
+		/// </summary>
+		glm::mat4 ComputeHierarchicalTransform() const;
 	};
 }

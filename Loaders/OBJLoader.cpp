@@ -26,6 +26,8 @@ namespace ve
 
 	std::expected<const char*, std::string> OBJLoader::ParseFaceIndex(const std::string& line, const char* linePtr, FaceIndex& face)
 	{
+		if (!linePtr)
+			return std::unexpected("Unexpected: Null line pointer!");
 		face = { 0, 0, 0 }; //defaults are 0 because .obj are 1 indexed, 0 accesses a default value in 
 		//pos, normal, or uv
 		auto lineEnd = line.data() + line.size();
@@ -37,7 +39,7 @@ namespace ve
 			ptr++; // Start after "f v"
 
 		if (ptr >= lineEnd)
-			return std::unexpected("Reached the end of teh line unexpectedly");
+			return std::unexpected("Reached the end of the line unexpectedly");
 
 		auto [newPtr, ec] = std::from_chars(ptr, lineEnd, face.vertexIndex);
 		if (ec != std::errc())
@@ -130,6 +132,8 @@ namespace ve
 	const char* OBJLoader::SkipOverWhiteSpaces(const std::string& line, const char* start)
 	{
 		auto end = line.data() + line.size();
+		if (start < line.data())
+			return end;
 		while (start < end)
 		{
 			if (*start != ' ')
@@ -215,6 +219,8 @@ namespace ve
 
 	std::expected<void, std::string> OBJLoader::LoadOBJ(const std::string& filePath, Mesh* mesh)
 	{
+		if (!mesh)
+			return std::unexpected("Unexpected null mesh pointer!");
 		if(!std::filesystem::exists(filePath))
 			return std::unexpected(std::format("OBJ file not found at path: {}", filePath));
 

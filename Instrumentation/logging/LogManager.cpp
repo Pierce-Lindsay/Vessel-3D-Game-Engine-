@@ -31,114 +31,128 @@ LogManager& LogManager::GetInstance()
 	return lm;
 }
 
-int LogManager::startUp()
+void LogManager::StartUp()
 {
-	resetFile();
+	if (auto e = ResetFile(); !e)
+	{
+		std::cout << (e.error()).ToString() << '\n';
+		return;
+	}
 	is_started = true;
 	VE_LOG("Log Manager successfully started!");
-	return 0;
 }
 
-bool LogManager::isStarted() const
+bool LogManager::IsStarted() const
 {
 	return is_started;
 }
 
-void LogManager::setFlush(bool shouldFlush)
+void LogManager::SetFlush(bool shouldFlush)
 {
 	this->shouldFlush = shouldFlush;
 }
 
-int LogManager::writeLog(const std::string& line)
+void LogManager::WriteLog(const std::string& line)
 {
 	if (!stream.is_open())
-		return -1;
+	{
+		std::cout << VE_ERROR_DIAGNOSTIC("Faliure to open stream when attempting write log!").ToString() << '\n';
+		return;
+	}
 
 	stream << line << '\n';
+
 	if(consolePrint)
 		std::cout << line << '\n';
 
 	if (shouldFlush)
 		stream.flush();
-
-	return 1;
 }
 
 
-void LogManager::setConsolePrint(bool print)
+void LogManager::SetConsolePrint(bool print)
 {
 	consolePrint = print;
 }
 
 
-bool LogManager::getConsolePrint() const
+bool LogManager::GetConsolePrint() const
 {
 	return consolePrint;
 }
 
-void LogManager::setOutputPathByRoot(const std::string& rootFile)
+std::expected<void, Diagnostic> LogManager::SetOutputPathByRoot(const std::string& rootFile)
 {
 	auto pathToRoot = FileUtils::GetPathToMarker(rootFile);
 
 	if (std::filesystem::exists(pathToRoot / rootFile))
 	{
 		relativeDir = pathToRoot;
-		resetFile();
+		if (auto e = ResetFile(); !e)
+			return std::unexpected(std::move(e.error()));
 	}
 	else
-		std::cout << "marker file not found!" << '\n';
+	{
+		return std::unexpected(VE_ERROR_DIAGNOSTIC(std::format("marker file: {} not found!", rootFile)));
+	}
+	return {};
 }
 
-void LogManager::openStream()
+std::expected<void, Diagnostic> LogManager::OpenStream()
 {
 	std::string full_path = (file_path + "/" + file_name);
 	stream = std::ofstream(relativeDir / full_path);
 	if (!stream.is_open())
 	{ //failed to open file
-		std::cerr << "Failed to open log: " << strerror(errno) << std::endl;
+		return std::unexpected(VE_ERROR_DIAGNOSTIC("Failed to open log: " + std::string(strerror(errno))));
 	}
+	return {};
 }
 
 
-void LogManager::setOutputPath(const std::string& path)
+void LogManager::SetOutputPath(const std::string& path)
 {
 	file_path = path;
-	resetFile();
+	ResetFile();
 }
 
-void LogManager::setOutputFileName(const std::string& name)
+void LogManager::SetOutputFileName(const std::string& name)
 {
 	file_name = name;
-	resetFile();
+	ResetFile();
 }
 
-const std::string& LogManager::getOutputPath() const
+const std::string& LogManager::GetOutputPath() const
 {
 	return file_path;
 }
 
-const std::string& LogManager::getOutputFileName() const
+const std::string& LogManager::GetOutputFileName() const
 {
 	return file_name;
 }
 
-std::string LogManager::getFullFilePath()
+std::string LogManager::GetFullFilePath()
 {
 	return (relativeDir / file_path / file_name).string();
 }
 
-void LogManager::resetFile()
+std::expected<void, Diagnostic> LogManager::ResetFile()
 {
 	if (stream.is_open())
 	{
 		stream.flush();
 		stream.close();
 	}
-	createDirectory(); //make sure new dir exists
-	openStream();
+	CreateDirectory(); //make sure new dir exists
+
+	if (auto e = OpenStream(); !e)
+		return std::unexpected(std::move(e.error()));
+
+	return {};
 }
 
-void LogManager::createDirectory()
+void LogManager::CreateDirectory()
 {
 	try {
 		std::filesystem::create_directories(relativeDir / file_path);

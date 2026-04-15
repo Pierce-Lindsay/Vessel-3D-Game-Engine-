@@ -3,13 +3,20 @@
 #include <format>
 #include <filesystem>
 #include <iostream>
+#include <expected>
+#include "Diagnostic.h"
 
-#define LM ve::LogManager::GetInstance()
+#define VE_LM ve::LogManager::GetInstance()
 
 /// Macros for logging messages to the log file. Uses the LogManager singleton instance to write the log message.
-#define VE_LOG(message) if (!LM.isStarted()) {LM.startUp();} LM.writeLog(std::format("LOG::{} in {}\n{}\n{}::{}\n", std::chrono::system_clock::now(), __FUNCSIG__, message, __FILE__, __LINE__)); 
-#define VE_WARN(message) if (!LM.isStarted()) {LM.startUp();} LM.writeLog(std::format("WARNING::{} in {}\n{}\n{}::{}\n", std::chrono::system_clock::now(), __FUNCSIG__, message, __FILE__, __LINE__)); 
-#define VE_ERROR(message) if (!LM.isStarted()) {LM.startUp();} LM.writeLog(std::format("ERROR::{} in {}\n{}\n{}::{}\n", std::chrono::system_clock::now(), __FUNCSIG__, message, __FILE__, __LINE__)); 
+#define VE_LOG(message)do {if (!VE_LM.IsStarted()) {VE_LM.StartUp();} VE_LM.WriteLog(std::format("LOG::{} in {}\n{}\n{}::{}\n", std::chrono::system_clock::now(), __FUNCSIG__, message, __FILE__, __LINE__));} while(0)
+#define VE_WARN(message)do {if (!VE_LM.IsStarted()) {VE_LM.StartUp();} VE_LM.WriteLog(std::format("WARNING::{} in {}\n{}\n{}::{}\n", std::chrono::system_clock::now(), __FUNCSIG__, message, __FILE__, __LINE__));} while(0)
+#define VE_ERROR(message)do {if (!VE_LM.IsStarted()) {VE_LM.StartUp();} VE_LM.WriteLog(std::format("ERROR::{} in {}\n{}\n{}::{}\n", std::chrono::system_clock::now(), __FUNCSIG__, message, __FILE__, __LINE__));} while(0)
+#define VE_LOG_DIAGNOSTIC(diagnostic) do{if (!VE_LM.IsStarted()) {VE_LM.StartUp();} VE_LM.WriteLog(diagnostic.ToString());} while(0)
+
+//Consumes return value, best when errors are not meant to be propogated, just logged
+#define VE_TRY_LOG(exp) do {auto VE_ERROR_ = exp; if(!VE_ERROR_){VE_LOG_DIAGNOSTIC(VE_ERROR_.error()); } else {}} while(0)
+
 namespace ve
 {
 	/// <summary>
@@ -36,22 +43,22 @@ namespace ve
 		/// <summary>
 		/// Gets the full relative file path of the log files.
 		/// </summary>
-		std::string getFullFilePath();
+		std::string GetFullFilePath();
 		
 		/// <summary>
 		/// Rename/moves log file based on the current file name/directory and the old.
 		/// </summary>
-		void resetFile();
+		std::expected<void, Diagnostic> ResetFile();
 
 		/// <summary>
 		/// Creates the required directory according to the manager's directory path
 		/// </summary>
-		void createDirectory();
+		void CreateDirectory();
 
 		/// <summary>
 		/// Opens the file stream for the logging file.
 		/// </summary>
-		void openStream();
+		std::expected<void, Diagnostic> OpenStream();
 
 	public:
 
@@ -66,66 +73,70 @@ namespace ve
 		/// <returns></returns>
 		static LogManager& GetInstance();
 
+		//LATER-> need better solution, this should be able to return errors but if the log manager
+		//isn't working, we have a recursive issue
 		/// <summary>
 		/// Open/create log file and setup LogManager.
 		/// </summary>
 		/// <returns>0 if succesfful, negative else.</returns>
-		int startUp();
+		void StartUp();
 
 		/// <summary>
 		/// Get whether the log manager is started. 
 		/// This indicates whether the log file is open and ready to be written to.
 		/// </summary>
 		/// <returns></returns>
-		bool isStarted() const;
+		bool IsStarted() const;
 
 		/// <summary>
 		/// Set whether the log file is flushed to every time it is updated (slower if true).
 		/// </summary>
-		void setFlush(bool do_flush = true);
+		void SetFlush(bool do_flush = true);
 
 		/// <summary>
 		/// Set whether the log file prints to the console aswell.
 		/// </summary>
-		void setConsolePrint(bool print = true);
+		void SetConsolePrint(bool print = true);
 
 		/// <summary>
 		/// Get whether the log file prints to the console aswell.
 		/// </summary>
-		bool getConsolePrint() const;
+		bool GetConsolePrint() const;
 
 		/// <summary>
-		/// Write a line to the log file from the given string. Returns 1 if successful.
+		/// Write a line to the log file from the given string.
 		/// Adds newline at the end of line. 
 		/// </summary>
 		/// <param name="line">A string input that is sent to the log.</param>
-		int writeLog(const std::string& line);
+		void WriteLog(const std::string& line);
 
+		//LATER-> need better solution, this should be able to return errors but if the log manager
+		//isn't working, we have a recursive issue
 		/// <summary>
 		/// Sets the outpath path (directory) log file are placed in.
 		/// </summary>
-		void setOutputPath(const std::string& path);
+		void SetOutputPath(const std::string& path);
 
 		/// <summary>
 		/// Sets the current relative output path to be based on the location of a marker file
 		/// with the given name upstream.
 		/// </summary>
 		/// <param name="rootFile"></param>
-		void setOutputPathByRoot(const std::string& rootFile);
+		std::expected<void, Diagnostic> SetOutputPathByRoot(const std::string& rootFile);
 
 		/// <summary>
 		/// Sets the file name for the output log file.
 		/// </summary>
-		void setOutputFileName(const std::string& name);
+		void SetOutputFileName(const std::string& name);
 
 		/// <summary>
 		/// Gets the current set output path (directory) log files are placed in.
 		/// </summary>
-		const std::string& getOutputPath() const;
+		const std::string& GetOutputPath() const;
 
 		/// <summary>
 		/// Gets the current set output filename of log files.
 		/// </summary>
-		const std::string& getOutputFileName() const;
+		const std::string& GetOutputFileName() const;
 	};
 }

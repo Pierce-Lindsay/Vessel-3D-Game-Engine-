@@ -99,3 +99,46 @@ void Hierarchy::addParentChildRelationship(Object* parent, Object* child)
 	else
 		childH->setParent(parent);
 }
+
+/// <summary>
+	/// Gets whether this component's object's model matrix should be influenced by the transforms
+	/// of its parent/ancestors.
+	/// </summary>
+bool Hierarchy::GetExperiencesHierarchicalTransformations() const
+{
+	return hierarchicalTransformations;
+}
+
+/// <summary>
+/// Set whether this component's object's model matrix should be influenced by the transforms
+/// of its parent/ancestors.
+/// </summary>
+void Hierarchy::SetExperiencesHierarchicalTransformations(bool b)
+{
+	hierarchicalTransformations = b;
+}
+
+/// <summary>
+/// Compute this component's object's model matrix by the transforms
+/// of its parent/ancestors. If this object doesn't have a transformer
+/// return identity matrix. If it isn't supposed to have herarchical transformation
+/// just returns this objects transformer.
+/// </summary>
+glm::mat4 Hierarchy::ComputeHierarchicalTransform() const
+{
+	auto trans = owner->getComponent<Transformer>();
+	glm::mat4 model = glm::mat4(1.0f);
+	if (!trans)
+		return model;
+	model = trans->getModelMat();
+	if (!hierarchicalTransformations || !parent)
+		return model;
+
+	if (auto parentHierarchy = parent->getComponent<Hierarchy>())
+		return parentHierarchy->ComputeHierarchicalTransform() * model;
+
+	if (auto parentTrans = parent->getComponent<Transformer>())
+		return parentTrans->getModelMat() * model;
+
+	return model;
+}

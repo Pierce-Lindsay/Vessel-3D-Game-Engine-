@@ -29,6 +29,16 @@ namespace ve {
 		/// Add a new entry to the map or override the current entry with the given
 		/// key. Return a normal raw pointer to the value.
 		/// </summary>
+		/// 
+		VectorMap() = default;
+		// Disable copying
+		VectorMap(const VectorMap&) = delete;
+		VectorMap& operator=(const VectorMap&) = delete;
+
+		// Enable moving
+		VectorMap(VectorMap&&) noexcept = default;
+		VectorMap& operator=(VectorMap&&) noexcept = default;
+
 		UNIQUE_PTR_VALUE* add(KEY key, std::unique_ptr<UNIQUE_PTR_VALUE> value)
 		{
 			UNIQUE_PTR_VALUE* value_ptr = value.get();
@@ -64,9 +74,9 @@ namespace ve {
 		/// <summary>
 		/// Retrieve const pointer to the vector of all values in the map.
 		/// </summary>
-		const std::vector<std::unique_ptr<UNIQUE_PTR_VALUE>>* getValues() const
+		const std::vector<std::unique_ptr<UNIQUE_PTR_VALUE>>& getValues() const
 		{
-			return &values;
+			return values;
 		}
 
 		/// <summary>

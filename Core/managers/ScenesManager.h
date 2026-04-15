@@ -3,30 +3,31 @@
 #include <unordered_map>
 #include "../scenes/Scene.h"
 #include "../utils/VectorMap.h"
+#include "Instrumentation/logging/Diagnostic.h"
+#include "Rendering/Camera.h"
+#include <expected>
 
 namespace ve {
 
 	class ScenesManager : public Manager
 	{
 	private:
-		ScenesManager();
-		ScenesManager(ScenesManager const& copy) = delete;
-		void operator=(ScenesManager const& assign) = delete;
 
 		std::unordered_map<size_t, std::unique_ptr<Scene>> sceneMap; //map of all scenes used in the game
 		Scene* activeScene = NULL; //currently active scene
 
 		std::unique_ptr<Scene> globalScene; // a scene that is always active while the game runs
 		//seperate from the activeScene. Handles objects that have lifetimes greater than a single scene.
+		std::shared_ptr<Renderer> renderer;
+		Camera* activeCamera = NULL;
+		Camera DEFAULT_CAMERA;
+
 
 	public:
 
-		~ScenesManager();
+		ScenesManager();
 
-		/// <summary>
-		/// Get instance of the one and only ScenesManager.
-		/// </summary>
-		static ScenesManager& GetInstance();
+		~ScenesManager();
 
 		/// <summary>
 		/// Startup scenes manager.
@@ -43,6 +44,12 @@ namespace ve {
 		/// Updates the current active scene and the global scene.
 		/// </summary>
 		void update();
+
+		/// <summary>
+		/// Draw the current scene aswell as the global scene.
+		/// </summary>
+		/// <returns></returns>
+		std::expected<void, Diagnostic> Draw();
 
 		/// <summary>
 		/// Set the active scene by a pointer to a scene that is currently in the scene map.
@@ -90,12 +97,10 @@ namespace ve {
 		/// <param name="scene"></param>
 		/// <returns>null if faliure to add, else raw pointer to the moved scene.</returns>
 		template <typename T, typename ...Args>
-		T* addScene(Args&& ... args)
+		Scene* addScene(Args&& ... args)
 		{
-			auto scene = std::make_unique<T>(this, std::forward<Args>(args)...);
-			T* scenePointer = scene.get();
-			sceneMap[scenePointer->getID()] = std::move(scenePointer);
-			return scenePointer;
+			auto scene = std::make_unique<T>(std::forward<Args>(args)...);
+			return addScene(std::move(scene));
 		}
 
 		/// <summary>
@@ -105,5 +110,13 @@ namespace ve {
 		/// <param name="sceneID"></param>
 		/// <returns>0 on success, -1 on faliure to remove.</returns>
 		int removeScene(size_t sceneID);
+
+		void SetRenderer(std::shared_ptr<Renderer> renderer);
+
+		std::shared_ptr<Renderer> GetRenderer() const;
+
+		void SetActiveCamera(Camera* camera);
+
+		Camera* GetActiveCamera() const;
 	};
 }

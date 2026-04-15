@@ -26,3 +26,13 @@ void Component::start(){}
 void Component::shutdown() {}
 
 void Component::update() {}
+
+bool Component::IsStarted() const
+{
+	return started;
+}
+
+void Component::SetStarted(bool b)
+{
+	started = b;
+}

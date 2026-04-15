@@ -17,12 +17,14 @@ namespace ve {
 	{
 	private:
 		inline static size_t currentID = 0;
+		bool started = false;
 		size_t id = 0;
 		std::string type = "object"; //maybe a catergory the object falls in
 		std::string name = "undefined"; //name if provided, helps with debugging/indentification
 		bool active = true; //should this object be updated and drawn?
 		bool markedForDeletion = false; //flag for delayed/lazy deletion
 		VectorMap<std::type_index, Component> components;
+		Scene* scene = NULL;
 
 		/// <summary>
 		/// Using LogManager to log messages.
@@ -139,6 +141,9 @@ namespace ve {
 		/// Performs an update operation on every frame on object and all it components.
 		/// </summary>
 		void update();
+
+		Scene* GetScene() const;
+		void SetScene(Scene* scene);
 	};
 
 }

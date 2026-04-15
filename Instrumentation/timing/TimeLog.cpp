@@ -31,16 +31,16 @@ namespace ve
 		return laps;
 	}
 
-	double TimeLog::GetStandardDeviationMs() const
+	double TimeLog::GetStandardDeviationUs() const
 	{
 		if (count < 2)
 			return 0.0;
-		double average = GetAverageMs();
+		double average = GetAverageUs();
 
 		double variance = 0.0;
 		for (const auto& lap : laps)
 		{
-			double lapMs = std::chrono::duration_cast<std::chrono::milliseconds>(lap).count();
+			double lapMs = std::chrono::duration_cast<std::chrono::microseconds>(lap).count();
 			auto diff = lapMs - average;
 			variance += (diff * diff);
 		}
@@ -70,9 +70,9 @@ namespace ve
 		return maxLap;
 	}
 
-	double TimeLog::GetAverageMs() const
+	double TimeLog::GetAverageUs() const
 	{
-		return std::chrono::duration_cast<std::chrono::milliseconds>(GetAverage()).count();
+		return std::chrono::duration_cast<std::chrono::microseconds>(GetAverage()).count();
 	}
 
 	double TimeLog::GetAverageNs() const
@@ -82,13 +82,13 @@ namespace ve
 
 	void TimeLog::LogInfo() const
 	{
-		VE_LOG(std::format("\n TimeLog Info [{}] \n Lap Count: {} \n Average: {} ms \n StdDev: {} ms \n Min: {} ms \n Max: {} ms \n",
+		VE_LOG(std::format("\n TimeLog Info [{}] \n Lap Count: {} \n Average: {} us \n StdDev: {} us \n Min: {} us \n Max: {} us \n",
 			name,
 			GetCount(),
-			GetAverageMs(),
-			GetStandardDeviationMs(),
-			std::chrono::duration_cast<std::chrono::milliseconds>(GetMin()).count(),
-			std::chrono::duration_cast<std::chrono::milliseconds>(GetMax()).count()));
+			GetAverageUs(),
+			GetStandardDeviationUs(),
+			std::chrono::duration_cast<std::chrono::microseconds>(GetMin()).count(),
+			std::chrono::duration_cast<std::chrono::microseconds>(GetMax()).count()));
 	}
 
 }

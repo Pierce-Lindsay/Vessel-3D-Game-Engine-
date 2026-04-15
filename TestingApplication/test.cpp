@@ -134,8 +134,8 @@ TEST(Scene, addAndRemove) {
 
 	TestScene ts;
 	ts.startup();
-	auto objs = ts.getObjects();
-	ASSERT_TRUE(objs->size() == 3);
+	const auto& objs = ts.getObjects();
+	ASSERT_TRUE(objs.size() == 3);
 	EXPECT_EQ(ts.getObject(ts.obj1->getID())->getID(), ts.obj1->getID());
 	EXPECT_EQ(ts.getObject(ts.obj2->getID())->getID(), ts.obj2->getID());
 	EXPECT_EQ(ts.getObject(ts.obj3->getID())->getID(), ts.obj3->getID());
@@ -143,7 +143,7 @@ TEST(Scene, addAndRemove) {
 	ts.lazyDeleteObject(ts.obj2); //request delete
 	EXPECT_EQ(ts.obj2->getMarkedForDeletion(), true);
 	ts.update(); //deletes
-	ASSERT_TRUE(objs->size() == 2);
+	ASSERT_TRUE(objs.size() == 2);
 	EXPECT_EQ(ts.getObject(ts.obj3->getID())->getID(), ts.obj3->getID());
 	EXPECT_EQ(ts.getObject(ts.obj1->getID())->getID(), ts.obj1->getID());
 	EXPECT_EQ(ts.getObject(id), nullptr);

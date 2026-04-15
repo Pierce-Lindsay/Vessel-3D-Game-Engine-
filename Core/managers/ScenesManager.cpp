@@ -6,6 +6,7 @@ using namespace ve;
 ScenesManager::ScenesManager()
 {
 	setType("ScenesManager");
+	DEFAULT_CAMERA = Camera();
 }
 
 ScenesManager::~ScenesManager() //clean thing sup to be safe
@@ -17,15 +18,11 @@ ScenesManager::~ScenesManager() //clean thing sup to be safe
 	globalScene = nullptr;
 }
 
-ScenesManager& ScenesManager::GetInstance()
-{
-	static ScenesManager sm;
-	return sm;
-}
-
 int ScenesManager::startUp()
 {
+	
 	VE_LOG("Scenes Manager successfully started!");
+	activeCamera = &DEFAULT_CAMERA;
 	return Manager::startUp();
 }
 
@@ -41,6 +38,18 @@ void ScenesManager::update()
 		globalScene->update();
 	if (activeScene)
 		activeScene->update();
+}
+
+std::expected<void, Diagnostic> ScenesManager::Draw()
+{
+	if (globalScene)
+		globalScene->QueueDraws();
+	if (activeScene)
+		activeScene->QueueDraws();
+
+	if (auto e = renderer->DrawQueue(activeCamera); !e)
+		return std::unexpected(e.error());
+	return {};
 }
 
 
@@ -79,6 +88,7 @@ Scene* ScenesManager::addScene(std::unique_ptr<Scene> scene)
 		return nullptr;
 
 	auto scenePointer = scene.get();
+	scenePointer->SetRenderer(renderer);
 	sceneMap[scenePointer->getID()] = std::move(scene); //assuming we don't need to check if id already here because should be unique
 	return scenePointer;
 }
@@ -112,7 +122,6 @@ int ScenesManager::swapObjectsScene(size_t objID, Scene* sceneA, Scene* sceneB)
 	}
 	auto obj = sceneA->getObject(objID);
 	auto unique = sceneA->swapOutObject(obj);
-	sceneB->addObject(std::move(unique));
 	if (sceneB->addObject(std::move(unique)))
 		return 0;
 	return -1;
@@ -133,4 +142,24 @@ int ScenesManager::removeScene(size_t sceneID)
 	sceneMap[sceneID].get()->shutdown(); //cleanup first
 	sceneMap.erase(sceneID);
 	return 0;
+}
+
+void ScenesManager::SetRenderer(std::shared_ptr<Renderer> renderer)
+{
+	this->renderer = renderer;
+}
+
+std::shared_ptr<Renderer> ScenesManager::GetRenderer() const
+{
+	return renderer;
+}
+
+void ScenesManager::SetActiveCamera(Camera* camera)
+{
+	activeCamera = camera;
+}
+
+Camera* ScenesManager::GetActiveCamera() const
+{
+	return activeCamera;
 }

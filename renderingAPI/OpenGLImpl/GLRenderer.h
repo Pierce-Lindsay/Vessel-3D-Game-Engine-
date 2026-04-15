@@ -18,10 +18,10 @@ namespace ve
 		/// The handle is used to look up the GLMesh for rendering.
 		/// </summary>
 		/// <param name="mesh"></param>
-		void Register(Mesh* mesh) override;
+		std::expected<void, Diagnostic> Register(Mesh* mesh) override;
 
-		void Draw(Mesh* mesh, const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection) override;
-		bool Init() override;
+		std::expected<void, Diagnostic> Draw(Mesh* mesh, const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection) override;
+		std::expected<void, Diagnostic> Init() override;
 		bool ShutDown() override;
 
 		void SetClearColor(const glm::vec4& color) override;
@@ -46,10 +46,10 @@ namespace ve
 		/// is located at "path/[name]", compiles the shader program and saves the handle in the shaderProgramMap.
 		/// If the shader program is already registered, it simply returns the existing handle.
 		/// </summary>
-		std::expected<GLuint, std::string> RegisterShader(const std::string& name);
+		std::expected<GLuint, Diagnostic> RegisterShader(const std::string& name);
 
-		std::expected<void, std::string> RegisterMaterial(Material* material);
-		std::expected<void, std::string> RegisterMesh(Mesh* mesh);
+		std::expected<void, Diagnostic> RegisterMaterial(Material* material);
+		std::expected<void, Diagnostic> RegisterMesh(Mesh* mesh);
 
 	};
 }

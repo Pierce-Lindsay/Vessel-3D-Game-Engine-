@@ -9,6 +9,10 @@
 #include "Rendering/Camera.h"
 #include "Loaders/OBJLoader.h"
 #include <glm/gtx/norm.hpp>
+#include "Rendering/SubMesh.h"
+#include "TestScene1.h"
+#include "Core/managers/Engine.h"
+
 
 
 
@@ -33,11 +37,15 @@ int foo2(int x, double y)
 void test()
 {
 	ve::LifetimeTimer timer("test_timer");
-    LM.startUp();
+    VE_LM.StartUp();
+
     std::string root = "engine.root";
-    LM.setOutputPathByRoot(root);
-    LM.setConsolePrint();
-    LM.setFlush(true);
+    if (auto e = VE_LM.SetOutputPathByRoot(root); !e)
+    {
+        VE_LOG_DIAGNOSTIC(e.error());
+    }
+    VE_LM.SetConsolePrint();
+    VE_LM.SetFlush(true);
     using namespace ve;
     VE_LOG(std::format("Hello {} world!", 10));
     VE_WARN("This is a warning!");
@@ -53,52 +61,19 @@ void test()
 
 int main(int argc, char* argv[])
 {
-    test();
-    ve::Window w;
-	w.init();
+    std::string root = "engine.root";
 
-	//testOBJLoader();
+    VE_LM.StartUp();
+    VE_TRY_LOG(VE_LM.SetOutputPathByRoot(root));
 
-    ve::Renderer* renderer = new ve::GLRenderer();
-	renderer->Init();
-	renderer->SetShaderDirectory(ve::FileUtils::GetPathToMarker("engine.root") / "assets" / "shaders");
-	renderer->SetClearColor(glm::vec4(0.2, 0.3, 0.3, 1.0));
-	renderer->SetViewport(0, 0, 1920, 1080);
+    //init engine
+    VE_ENGINE->startUp();
 
-    //auto cam = new ve::Camera();
-	auto cam = new ve::Camera(glm::vec3(0, 0, 3), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0), 45.0f, w.getAspectRatio(), 0.1f, 100.0f);
+    //add scenes in use
+    auto scene = VE_ENGINE->GetScenesManager()->addScene<TestScene1>();
+    VE_ENGINE->GetScenesManager()->setActiveScene(scene->getID());
 
-
-	auto material = new ve::Material("basicShader.shader", glm::vec4(1.0, 0, 0, 1.0));
-	auto mesh = new ve::Mesh(
-        { },
-        { }, material);
-
-    auto path = ve::FileUtils::GetPathToMarker("engine.root") / "assets" / "models";
-   auto er = ve::OBJLoader::LoadOBJ((path / "cessna.obj").string(), mesh);  
-
-   if (!er)
-       VE_WARN(er.error());
-
-	renderer->Register(mesh);
-
-    float f = 0;
-  
-
-    while(w.isOpen())
-    {
-        auto mat = glm::scale(glm::mat4(1.0f), glm::vec3(0.1, 0.1, 0.1));
-        mat = glm::rotate(mat, glm::radians(f), glm::vec3(0, 1, 0));
-        mat = glm::translate(mat, glm::vec3(0, 0, -30));
-        
-        renderer->Clear();
-		renderer->Draw(mesh, mat, cam);
-        w.update();
-        f += 0.01;
-        
-	}
-	delete mesh;
-	delete material;
-	delete renderer;
+    //run engine
+    VE_ENGINE->Run();
 	return 0;
 }

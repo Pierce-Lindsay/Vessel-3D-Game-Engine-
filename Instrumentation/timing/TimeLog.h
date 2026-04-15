@@ -42,7 +42,7 @@ namespace ve
 		/// Calculate the standard deviation of the laps in the log.
 		/// </summary>
 		/// <returns></returns>
-		double GetStandardDeviationMs() const;
+		double GetStandardDeviationUs() const;
 
 		/// <summary>
 		/// Finds and returns the min lap duration.
@@ -55,9 +55,9 @@ namespace ve
 		std::chrono::high_resolution_clock::duration GetMax() const;
 
 		/// <summary>
-		/// Gets the average lap duration in milliseconds.
+		/// Gets the average lap duration in microseconds.
 		/// </summary>
-		double GetAverageMs() const;
+		double GetAverageUs() const;
 		
 		/// <summary>
 		/// Gets the average lap duration in nanoseconds.

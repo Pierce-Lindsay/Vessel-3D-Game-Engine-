@@ -76,7 +76,31 @@ void Object::start()
 
 void Object::update()
 {
+	if (!started)
+	{
+		start();
+		started = true;
+	}
+		
 	//update all components if allowed
 	if(active && !markedForDeletion)
-		components.mapVoid([](Component* comp) { comp->update(); });
+		components.mapVoid([](Component* comp) 
+			{ 
+				if (!comp->IsStarted()) //allow complete override of component startup and update
+					//without losing this functionality
+				{
+					comp->start();
+					comp->SetStarted(true);
+				}
+				comp->update();});
+}
+
+Scene* Object::GetScene() const
+{
+	return scene;
+}
+
+void Object::SetScene(Scene* scene)
+{
+	this->scene = scene;
 }

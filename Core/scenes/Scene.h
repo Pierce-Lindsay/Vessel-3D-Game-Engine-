@@ -1,6 +1,7 @@
 #pragma once
 #include "../objects/Object.h"
 #include <vector>
+#include "Rendering/Renderer.h"
 
 namespace ve {
 	/// <summary>
@@ -10,14 +11,16 @@ namespace ve {
 	/// </summary>
 	class Scene
 	{
-	private:
+	protected:
 		static const size_t DELETION_MAX_PER_UPDATE = 100; //at max delete 100 objects in a frame
 		inline static size_t currentID = 0;
+		bool started = false;
 		size_t id = 0;
 		std::string name = "scene";
 		VectorMap<size_t, Object> objects; //a vector map for handling object(contiguous iteration with 
 		//o(1) deletion and random access by id)
 		std::vector <Object*> objectsToDelete; //stack like vector that is a queue of objects to delete
+		std::shared_ptr<Renderer> renderer;
 
 	public:
 		/// <summary>
@@ -42,7 +45,7 @@ namespace ve {
 		/// comprise the scene.
 		/// </summary>
 		/// <returns></returns>
-		const std::vector<std::unique_ptr<Object>>* getObjects() const;
+		const std::vector<std::unique_ptr<Object>>& getObjects() const;
 
 		/// <summary>
 		/// Get a pointer to the object with the given id or return null
@@ -117,8 +120,17 @@ namespace ve {
 		virtual void update();
 
 		/// <summary>
+		/// Queue all game objects with compatability for drawing. 
+		/// </summary>
+		virtual void QueueDraws();
+
+		/// <summary>
 		/// Shutdown scene and clearup all dependencies/unload resources.
 		/// </summary>
 		void shutdown();
+
+		void SetRenderer(std::shared_ptr<Renderer> renderer);
+
+		std::shared_ptr<Renderer> GetRenderer() const;
 	};
 }

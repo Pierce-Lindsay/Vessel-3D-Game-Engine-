@@ -14,6 +14,8 @@ TestScene::TestScene()
 int TestScene::startup()
 { 
 	//create some objects and add them to the scene
+
+	/*
 	obj1 = createSceneObject("hello", this);
 	obj1->addComponent<Transformer>(glm::vec3(1, 1, 1));
 
@@ -23,5 +25,6 @@ int TestScene::startup()
 	obj3 = createSceneObject("hello3", this);
 	std::vector<Object*> children = { obj1 };
 	obj3->addComponent<Hierarchy>(children, nullptr);
+	*/
 	return 1;
 }

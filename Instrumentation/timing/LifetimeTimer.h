@@ -16,7 +16,7 @@ namespace ve
 		LifetimeTimer(const std::string& name);
 
 		/// <summary>
-		/// Destroy the lifetime timer. And return the total lifetime of the timer in miliseconds.
+		/// Destroy the lifetime timer. And return the total lifetime of the timer in microseconds.
 		/// </summary>
 		~LifetimeTimer();
 	};

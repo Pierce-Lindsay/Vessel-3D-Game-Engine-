@@ -16,6 +16,7 @@ namespace ve {
 	{
 	private:
 		std::string type = "component";
+		bool started = false;
 	protected:
 		Object* owner = NULL; //for convenient child access
 	public:
@@ -56,6 +57,10 @@ namespace ve {
 		/// Called every frame by engine
 		/// </summary>
 		virtual void update();
+
+		bool IsStarted() const;
+
+		void SetStarted(bool b);
 	};
 }
 
